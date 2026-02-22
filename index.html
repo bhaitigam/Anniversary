@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#881337">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Kavin & Dimpi | 2nd Anniversary</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,15 +14,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
+        /* CSS Reset & Base */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            touch-action: pan-y pinch-zoom;
+        }
+
         /* Custom Fonts */
         .font-script { font-family: 'Great Vibes', cursive; }
         .font-serif { font-family: 'Playfair Display', serif; }
         .font-sans { font-family: 'Lato', sans-serif; }
 
-        /* Custom Animations */
+        /* Animations */
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-15px); }
         }
         
         @keyframes heartbeat {
@@ -34,42 +59,37 @@
             50% { background-position: 100% 50%; }
         }
 
-        @keyframes spin-slow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes typewriter {
-            from { width: 0; }
-            to { width: 100%; }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
         }
 
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: #d4af37; }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(244, 63, 94, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(244, 63, 94, 0.8); }
         }
 
         /* Utility Classes */
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-heartbeat { animation: heartbeat 2s infinite; }
         .animate-gradient { background-size: 200% 200%; animation: gradient-xy 15s ease infinite; }
-        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-shimmer { 
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
         
         .glass-panel {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #2d1b2e; }
-        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
 
         /* Particle Canvas */
         #particle-canvas {
@@ -82,49 +102,149 @@
             z-index: 1;
         }
 
-        /* Timeline Line */
+        /* Timeline */
         .timeline-line::before {
             content: '';
             position: absolute;
-            left: 50%;
+            left: 24px;
             top: 0;
             bottom: 0;
             width: 2px;
             background: linear-gradient(to bottom, #d4af37, #ec4899, #d4af37);
-            transform: translateX(-50%);
+        }
+        
+        @media (min-width: 768px) {
+            .timeline-line::before {
+                left: 50%;
+                transform: translateX(-50%);
+            }
         }
 
-        /* Gallery Hover */
-        .gallery-item:hover .gallery-overlay {
-            opacity: 1;
+        /* Gallery */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            cursor: pointer;
+            touch-action: manipulation;
         }
-        .gallery-item:hover img {
-            transform: scale(1.1);
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:active img {
+            transform: scale(0.95);
+        }
+        
+        @media (hover: hover) {
+            .gallery-item:hover img {
+                transform: scale(1.1);
+            }
+            .gallery-item:hover .gallery-overlay {
+                opacity: 1;
+            }
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
         }
 
-        /* Typewriter Effect Container */
+        /* Touch-friendly buttons */
+        .btn-touch {
+            min-height: 48px;
+            min-width: 48px;
+            padding: 12px 24px;
+            touch-action: manipulation;
+        }
+
+        /* Typewriter */
         .typewriter-text {
             overflow: hidden;
-            white-space: nowrap;
             border-right: 2px solid #d4af37;
-            animation: 
-                typewriter 4s steps(40, end),
-                blink-caret 0.75s step-end infinite;
+            white-space: nowrap;
+            animation: blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #d4af37; }
         }
 
-        /* Reveal on Scroll */
+        /* Reveal Animation */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
-            transition: all 0.8s ease-out;
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
         }
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* Prevent text selection on interactive elements */
+        .no-select {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Responsive Typography Scale */
+        .text-responsive-hero {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            line-height: 1.1;
+        }
+        
+        .text-responsive-sub {
+            font-size: clamp(1.25rem, 4vw, 2rem);
+        }
+        
+        .text-responsive-body {
+            font-size: clamp(0.875rem, 2vw, 1.125rem);
+        }
+
+        /* Safe area insets for notched phones */
+        .safe-top { padding-top: env(safe-area-inset-top); }
+        .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+        .safe-x { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #2d1b2e; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 3px; }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Android Chrome address bar color */
+        .theme-color-meta { display: none; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-rose-900 via-purple-900 to-slate-900 text-white font-sans overflow-x-hidden animate-gradient min-h-screen">
+<body class="bg-gradient-to-br from-rose-950 via-purple-950 to-slate-950 text-white font-sans animate-gradient min-h-screen safe-top safe-bottom safe-x">
 
     <!-- Particle Canvas -->
     <canvas id="particle-canvas"></canvas>
@@ -132,133 +252,167 @@
     <!-- Navigation -->
     <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <span class="font-script text-3xl text-rose-300">K & D</span>
+                    <span class="font-script text-2xl md:text-3xl text-rose-300 no-select">K & D</span>
                 </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#home" class="hover:text-rose-300 transition-colors px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <a href="#story" class="hover:text-rose-300 transition-colors px-3 py-2 rounded-md text-sm font-medium">Our Story</a>
-                        <a href="#gallery" class="hover:text-rose-300 transition-colors px-3 py-2 rounded-md text-sm font-medium">Gallery</a>
-                        <a href="#quotes" class="hover:text-rose-300 transition-colors px-3 py-2 rounded-md text-sm font-medium">Quotes</a>
-                        <button onclick="toggleMusic()" class="flex items-center space-x-2 bg-rose-500/20 hover:bg-rose-500/40 px-4 py-2 rounded-full transition-all border border-rose-400/30">
-                            <span id="music-icon">🎵</span>
-                            <span class="text-sm" id="music-text">Play Melody</span>
-                        </button>
-                    </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#home" class="text-sm font-medium hover:text-rose-300 transition-colors px-3 py-2">Home</a>
+                    <a href="#story" class="text-sm font-medium hover:text-rose-300 transition-colors px-3 py-2">Our Story</a>
+                    <a href="#gallery" class="text-sm font-medium hover:text-rose-300 transition-colors px-3 py-2">Gallery</a>
+                    <a href="#quotes" class="text-sm font-medium hover:text-rose-300 transition-colors px-3 py-2">Quotes</a>
+                    <button onclick="toggleMusic()" class="btn-touch flex items-center space-x-2 bg-rose-500/20 hover:bg-rose-500/40 rounded-full border border-rose-400/30 transition-all">
+                        <span id="music-icon">🎵</span>
+                        <span class="text-sm hidden lg:inline" id="music-text">Play</span>
+                    </button>
                 </div>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden btn-touch flex items-center justify-center rounded-lg bg-white/10" aria-label="Menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="mobile-menu fixed inset-0 z-50 bg-black/95 backdrop-blur-xl md:hidden flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-white/10">
+                <span class="font-script text-2xl text-rose-300">K & D</span>
+                <button onclick="toggleMobileMenu()" class="btn-touch rounded-lg bg-white/10 flex items-center justify-center" aria-label="Close">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-6 p-8">
+                <a href="#home" onclick="toggleMobileMenu()" class="text-2xl font-serif hover:text-rose-300 transition-colors">Home</a>
+                <a href="#story" onclick="toggleMobileMenu()" class="text-2xl font-serif hover:text-rose-300 transition-colors">Our Story</a>
+                <a href="#gallery" onclick="toggleMobileMenu()" class="text-2xl font-serif hover:text-rose-300 transition-colors">Gallery</a>
+                <a href="#quotes" onclick="toggleMobileMenu()" class="text-2xl font-serif hover:text-rose-300 transition-colors">Quotes</a>
+                <button onclick="toggleMusic(); toggleMobileMenu();" class="btn-touch mt-4 flex items-center space-x-3 bg-rose-500/30 px-8 py-4 rounded-full border border-rose-400/50">
+                    <span id="mobile-music-icon">🎵</span>
+                    <span class="text-lg">Play Melody</span>
+                </button>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden z-10">
-        <!-- Background Elements -->
-        <div class="absolute inset-0 z-0">
-            <div class="absolute top-20 left-10 w-72 h-72 bg-rose-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
-            <div class="absolute bottom-20 right-10 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style="animation-delay: 2s;"></div>
-            <div class="absolute top-1/2 left-1/2 w-80 h-80 bg-yellow-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style="animation-delay: 4s;"></div>
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden z-10 px-4">
+        <!-- Background Blobs -->
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <div class="absolute top-20 -left-20 w-64 h-64 md:w-96 md:h-96 bg-rose-500/30 rounded-full mix-blend-screen filter blur-3xl animate-float"></div>
+            <div class="absolute bottom-20 -right-20 w-80 h-80 md:w-[500px] md:h-[500px] bg-purple-500/30 rounded-full mix-blend-screen filter blur-3xl animate-float" style="animation-delay: 2s;"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-96 md:h-96 bg-yellow-500/20 rounded-full mix-blend-screen filter blur-3xl animate-float" style="animation-delay: 4s;"></div>
         </div>
 
-        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
-            <div class="mb-6 inline-block animate-heartbeat">
-                <svg class="w-16 h-16 text-rose-400 mx-auto drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+        <div class="relative z-10 text-center max-w-5xl mx-auto w-full">
+            <!-- Heart Icon -->
+            <div class="mb-4 md:mb-6 inline-block animate-heartbeat">
+                <svg class="w-12 h-12 md:w-16 md:h-16 text-rose-400 mx-auto drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
             </div>
             
-            <h2 class="text-rose-300 text-lg md:text-xl tracking-[0.3em] uppercase mb-4 font-light animate-fade-in-up">Celebrating</h2>
-            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-rose-200 via-yellow-200 to-rose-200 drop-shadow-sm animate-fade-in-up" style="animation-delay: 0.2s;">
+            <h2 class="text-rose-300 text-xs md:text-sm uppercase tracking-[0.3em] mb-2 md:mb-4 font-light animate-fade-in-up">Celebrating</h2>
+            
+            <h1 class="font-serif text-responsive-hero font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-rose-200 via-yellow-200 to-rose-200 drop-shadow-sm animate-fade-in-up px-2">
                 Happy 2nd Anniversary
             </h1>
             
-            <div class="flex items-center justify-center space-x-4 mb-8 animate-fade-in-up" style="animation-delay: 0.4s;">
-                <span class="font-script text-4xl md:text-6xl text-rose-200">Kavin Gam</span>
-                <span class="text-3xl md:text-5xl text-rose-400 animate-pulse">❤️</span>
-                <span class="font-script text-4xl md:text-6xl text-rose-200">Dimpi Dutta</span>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-6 md:mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <span class="font-script text-3xl sm:text-4xl md:text-6xl text-rose-200">Kavin Gam</span>
+                <span class="text-2xl sm:text-3xl md:text-5xl text-rose-400 animate-pulse">❤️</span>
+                <span class="font-script text-3xl sm:text-4xl md:text-6xl text-rose-200">Dimpi Dutta</span>
             </div>
 
-            <p class="text-lg md:text-2xl text-rose-100/80 font-light italic mb-12 max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.6s;">
+            <p class="text-responsive-body text-rose-100/80 font-light italic mb-8 md:mb-12 max-w-2xl mx-auto px-4 animate-fade-in-up" style="animation-delay: 0.4s;">
                 "Two years of love, laughter & forever"
             </p>
 
-            <button onclick="scrollToSection('story')" class="group relative px-8 py-4 bg-gradient-to-r from-rose-500 to-purple-600 rounded-full overflow-hidden shadow-2xl hover:shadow-rose-500/50 transition-all duration-300 animate-fade-in-up" style="animation-delay: 0.8s;">
+            <button onclick="scrollToSection('story')" class="btn-touch group relative bg-gradient-to-r from-rose-500 to-purple-600 rounded-full overflow-hidden shadow-xl hover:shadow-rose-500/50 transition-all duration-300 animate-fade-in-up animate-pulse" style="animation-delay: 0.6s;">
                 <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full"></div>
-                <span class="relative flex items-center space-x-2 text-white font-semibold tracking-wider">
+                <span class="relative flex items-center space-x-2 text-white font-semibold text-sm md:text-base tracking-wider px-6 py-3">
                     <span>Our Journey</span>
-                    <svg class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                    <svg class="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                    </svg>
                 </span>
             </button>
         </div>
     </section>
 
     <!-- Timeline Section -->
-    <section id="story" class="relative py-24 z-10">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="text-center mb-16 reveal">
-                <h2 class="font-script text-5xl md:text-6xl text-rose-300 mb-4">Our Love Story</h2>
-                <div class="w-24 h-1 bg-gradient-to-r from-transparent via-rose-400 to-transparent mx-auto"></div>
+    <section id="story" class="relative py-16 md:py-24 z-10 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12 md:mb-16 reveal">
+                <h2 class="font-script text-4xl md:text-6xl text-rose-300 mb-4">Our Love Story</h2>
+                <div class="w-20 md:w-24 h-1 bg-gradient-to-r from-transparent via-rose-400 to-transparent mx-auto"></div>
             </div>
 
-            <div class="relative timeline-line space-y-12 md:space-y-0">
+            <div class="relative timeline-line space-y-8 md:space-y-0">
                 <!-- First Meet -->
-                <div class="relative md:flex items-center justify-between reveal">
-                    <div class="md:w-5/12 md:text-right mb-4 md:mb-0">
-                        <div class="glass-panel p-6 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300 border-rose-300/20">
-                            <h3 class="font-serif text-2xl text-rose-300 mb-2">The First Meet</h3>
-                            <p class="text-rose-100/70 text-sm mb-2">Where it all began</p>
-                            <p class="text-gray-200">Two souls collided in a moment of destiny. The world stopped, and our story began with a smile that lit up the room.</p>
+                <div class="relative md:flex items-center justify-between reveal pl-16 md:pl-0">
+                    <div class="md:w-5/12 md:text-right mb-2 md:mb-0">
+                        <div class="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl hover:transform hover:-translate-y-1 transition-all duration-300">
+                            <h3 class="font-serif text-xl md:text-2xl text-rose-300 mb-1 md:mb-2">The First Meet</h3>
+                            <p class="text-rose-100/70 text-xs md:text-sm mb-2">Where it all began</p>
+                            <p class="text-gray-200 text-sm md:text-base leading-relaxed">Two souls collided in a moment of destiny. The world stopped, and our story began with a smile.</p>
                         </div>
                     </div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50">
-                        <span class="text-xl">✨</span>
+                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50">
+                        <span class="text-lg md:text-xl">✨</span>
                     </div>
                     <div class="md:w-5/12"></div>
                 </div>
 
                 <!-- First Year -->
-                <div class="relative md:flex items-center justify-between reveal">
-                    <div class="md:w-5/12"></div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50">
-                        <span class="text-xl">💍</span>
+                <div class="relative md:flex items-center justify-between reveal pl-16 md:pl-0">
+                    <div class="md:w-5/12 md:order-1 order-2"></div>
+                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50">
+                        <span class="text-lg md:text-xl">💍</span>
                     </div>
-                    <div class="md:w-5/12 md:pl-8 mb-4 md:mb-0">
-                        <div class="glass-panel p-6 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300 border-rose-300/20">
-                            <h3 class="font-serif text-2xl text-rose-300 mb-2">The First Year</h3>
-                            <p class="text-rose-100/70 text-sm mb-2">Building dreams together</p>
-                            <p class="text-gray-200">Learning to dance in the rain, building our first home together, and discovering that love is not just a feeling, but a choice we make every day.</p>
+                    <div class="md:w-5/12 md:pl-8 mb-2 md:mb-0 md:order-2 order-1">
+                        <div class="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl hover:transform hover:-translate-y-1 transition-all duration-300">
+                            <h3 class="font-serif text-xl md:text-2xl text-rose-300 mb-1 md:mb-2">The First Year</h3>
+                            <p class="text-rose-100/70 text-xs md:text-sm mb-2">Building dreams</p>
+                            <p class="text-gray-200 text-sm md:text-base leading-relaxed">Learning to dance in the rain, building our home, and choosing love every single day.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Second Year -->
-                <div class="relative md:flex items-center justify-between reveal">
-                    <div class="md:w-5/12 md:text-right mb-4 md:mb-0">
-                        <div class="glass-panel p-6 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300 border-rose-300/20 border-2 border-rose-400/40 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-rose-500 text-xs px-3 py-1 rounded-bl-lg">Current</div>
-                            <h3 class="font-serif text-2xl text-rose-300 mb-2">The Second Year</h3>
-                            <p class="text-rose-100/70 text-sm mb-2">Growing stronger</p>
-                            <p class="text-gray-200">Deeper understanding, stronger bonds. Through every challenge and joy, we've proven that our love is the constant that holds everything together.</p>
+                <div class="relative md:flex items-center justify-between reveal pl-16 md:pl-0">
+                    <div class="md:w-5/12 md:text-right mb-2 md:mb-0">
+                        <div class="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl hover:transform hover:-translate-y-1 transition-all duration-300 border-2 border-rose-400/40 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-rose-500 text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-bl-lg font-bold">NOW</div>
+                            <h3 class="font-serif text-xl md:text-2xl text-rose-300 mb-1 md:mb-2">The Second Year</h3>
+                            <p class="text-rose-100/70 text-xs md:text-sm mb-2">Growing stronger</p>
+                            <p class="text-gray-200 text-sm md:text-base leading-relaxed">Deeper understanding, stronger bonds. Our love is the constant through every joy.</p>
                         </div>
                     </div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-yellow-400 to-rose-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-yellow-500/50 animate-pulse">
-                        <span class="text-xl">🎉</span>
+                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-yellow-400 to-rose-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-yellow-500/50 animate-pulse">
+                        <span class="text-lg md:text-xl">🎉</span>
                     </div>
                     <div class="md:w-5/12"></div>
                 </div>
 
                 <!-- Forever -->
-                <div class="relative md:flex items-center justify-between reveal">
-                    <div class="md:w-5/12"></div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-purple-400 to-rose-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-purple-500/50">
-                        <span class="text-xl">∞</span>
+                <div class="relative md:flex items-center justify-between reveal pl-16 md:pl-0">
+                    <div class="md:w-5/12 md:order-1 order-2"></div>
+                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-400 to-rose-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-purple-500/50">
+                        <span class="text-lg md:text-xl">∞</span>
                     </div>
-                    <div class="md:w-5/12 md:pl-8 mb-4 md:mb-0">
-                        <div class="glass-panel p-6 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300 border-rose-300/20">
-                            <h3 class="font-serif text-2xl text-rose-300 mb-2">Forever</h3>
-                            <p class="text-rose-100/70 text-sm mb-2">To be continued...</p>
-                            <p class="text-gray-200">This is just the beginning of our eternal story. Every day is a new page, and I can't wait to write the rest with you by my side.</p>
+                    <div class="md:w-5/12 md:pl-8 mb-2 md:mb-0 md:order-2 order-1">
+                        <div class="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl hover:transform hover:-translate-y-1 transition-all duration-300">
+                            <h3 class="font-serif text-xl md:text-2xl text-rose-300 mb-1 md:mb-2">Forever</h3>
+                            <p class="text-rose-100/70 text-xs md:text-sm mb-2">To be continued...</p>
+                            <p class="text-gray-200 text-sm md:text-base leading-relaxed">Every day is a new page. I can't wait to write the rest with you.</p>
                         </div>
                     </div>
                 </div>
@@ -267,59 +421,48 @@
     </section>
 
     <!-- Photo Gallery -->
-    <section id="gallery" class="relative py-24 z-10 bg-black/20">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-16 reveal">
-                <h2 class="font-script text-5xl md:text-6xl text-rose-300 mb-4">Captured Moments</h2>
-                <p class="text-rose-100/60 italic">"Every picture tells a story of us"</p>
+    <section id="gallery" class="relative py-16 md:py-24 z-10 bg-black/20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-10 md:mb-16 reveal">
+                <h2 class="font-script text-4xl md:text-6xl text-rose-300 mb-3 md:mb-4">Captured Moments</h2>
+                <p class="text-rose-100/60 italic text-sm md:text-base">"Every picture tells a story of us"</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
-                <!-- Gallery Item 1 -->
-                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal" onclick="openLightbox(0)">
-                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&q=80" alt="Romantic Couple" class="w-full h-full object-cover transition-transform duration-700">
-                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
-                        <p class="font-serif text-xl text-white">The Beginning</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 auto-rows-[150px] sm:auto-rows-[200px] md:auto-rows-[250px]">
+                <div class="gallery-item row-span-2 reveal" onclick="openLightbox(0)">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&q=80" alt="Romantic Couple" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p class="font-serif text-base md:text-xl text-white">The Beginning</p>
                     </div>
                 </div>
-
-                <!-- Gallery Item 2 -->
-                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal md:col-span-2" onclick="openLightbox(1)">
-                    <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&q=80" alt="Wedding Rings" class="w-full h-full object-cover transition-transform duration-700">
-                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
-                        <p class="font-serif text-xl text-white">Promise of Forever</p>
+                <div class="gallery-item reveal" onclick="openLightbox(1)">
+                    <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&q=80" alt="Wedding Rings" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p class="font-serif text-sm md:text-xl text-white">Promise</p>
                     </div>
                 </div>
-
-                <!-- Gallery Item 3 -->
-                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal md:col-span-2" onclick="openLightbox(2)">
-                    <img src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&q=80" alt="Couple Holding Hands" class="w-full h-full object-cover transition-transform duration-700">
-                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
-                        <p class="font-serif text-xl text-white">Hand in Hand</p>
+                <div class="gallery-item reveal" onclick="openLightbox(2)">
+                    <img src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=800&q=80" alt="Holding Hands" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p class="font-serif text-sm md:text-xl text-white">Together</p>
                     </div>
                 </div>
-
-                <!-- Gallery Item 4 -->
-                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal" onclick="openLightbox(3)">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80" alt="Romantic Sunset" class="w-full h-full object-cover transition-transform duration-700">
-                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
-                        <p class="font-serif text-xl text-white">Golden Hour</p>
+                <div class="gallery-item col-span-2 reveal" onclick="openLightbox(3)">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80" alt="Sunset" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p class="font-serif text-base md:text-xl text-white">Golden Hour</p>
                     </div>
                 </div>
-
-                <!-- Gallery Item 5 -->
-                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal" onclick="openLightbox(4)">
-                    <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80" alt="Couple Laughing" class="w-full h-full object-cover transition-transform duration-700">
-                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
-                        <p class="font-serif text-xl text-white">Pure Joy</p>
+                <div class="gallery-item reveal" onclick="openLightbox(4)">
+                    <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80" alt="Laughing" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p class="font-serif text-sm md:text-xl text-white">Joy</p>
                     </div>
                 </div>
-
-                <!-- Gallery Item 6 -->
-                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal md:col-span-2" onclick="openLightbox(5)">
-                    <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=1200&q=80" alt="Dancing Couple" class="w-full h-full object-cover transition-transform duration-700">
-                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
-                        <p class="font-serif text-xl text-white">Dance of Love</p>
+                <div class="gallery-item col-span-2 md:col-span-1 reveal" onclick="openLightbox(5)">
+                    <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=800&q=80" alt="Dancing" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p class="font-serif text-base md:text-xl text-white">Dance</p>
                     </div>
                 </div>
             </div>
@@ -327,40 +470,66 @@
     </section>
 
     <!-- Lightbox Modal -->
-    <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-sm flex items-center justify-center p-4">
-        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors">
-            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-md flex items-center justify-center p-4" onclick="closeLightboxOnBackground(event)">
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 md:top-6 md:right-6 btn-touch text-white/70 hover:text-white transition-colors z-50" aria-label="Close">
+            <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
         </button>
-        <button onclick="changeImage(-1)" class="absolute left-6 text-white/70 hover:text-white transition-colors">
-            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        
+        <button onclick="changeImage(-1); event.stopPropagation();" class="absolute left-2 md:left-6 btn-touch text-white/70 hover:text-white transition-colors z-50" aria-label="Previous">
+            <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
         </button>
-        <button onclick="changeImage(1)" class="absolute right-6 text-white/70 hover:text-white transition-colors">
-            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        
+        <button onclick="changeImage(1); event.stopPropagation();" class="absolute right-2 md:right-6 btn-touch text-white/70 hover:text-white transition-colors z-50" aria-label="Next">
+            <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
         </button>
-        <img id="lightbox-img" src="" alt="Gallery Image" class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl">
+        
+        <img id="lightbox-img" src="" alt="Gallery" class="max-h-[80vh] max-w-[90vw] object-contain rounded-lg shadow-2xl select-none" onclick="event.stopPropagation()">
+        
+        <!-- Swipe hint for mobile -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm md:hidden flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+            </svg>
+            <span>Swipe</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+        </div>
     </div>
 
     <!-- Quotes Section -->
-    <section id="quotes" class="relative py-24 z-10 overflow-hidden">
+    <section id="quotes" class="relative py-16 md:py-24 z-10 overflow-hidden px-4">
         <div class="absolute inset-0 bg-gradient-to-r from-rose-900/50 via-purple-900/50 to-rose-900/50"></div>
-        <div class="max-w-4xl mx-auto px-4 relative">
-            <div class="text-center mb-12 reveal">
-                <h2 class="font-script text-5xl md:text-6xl text-rose-300 mb-4">Words of Love</h2>
+        <div class="max-w-4xl mx-auto relative">
+            <div class="text-center mb-8 md:mb-12 reveal">
+                <h2 class="font-script text-4xl md:text-6xl text-rose-300 mb-3 md:mb-4">Words of Love</h2>
             </div>
             
-            <div class="glass-panel rounded-3xl p-8 md:p-12 text-center relative reveal">
-                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-6xl text-rose-400 opacity-50">"</div>
-                <div id="quote-container" class="min-h-[200px] flex items-center justify-center">
-                    <p id="quote-text" class="font-serif text-2xl md:text-4xl text-rose-100 leading-relaxed typewriter-text"></p>
-                </div>
-                <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-6xl text-rose-400 opacity-50 rotate-180">"</div>
+            <div class="glass-panel rounded-2xl md:rounded-3xl p-6 md:p-12 text-center relative reveal mx-2">
+                <div class="absolute -top-4 md:-top-6 left-1/2 -translate-x-1/2 text-4xl md:text-6xl text-rose-400/50">"</div>
                 
-                <div class="mt-8 flex justify-center space-x-4">
-                    <button onclick="prevQuote()" class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                <div class="min-h-[120px] md:min-h-[200px] flex items-center justify-center py-4">
+                    <p id="quote-text" class="font-serif text-lg sm:text-xl md:text-3xl lg:text-4xl text-rose-100 leading-relaxed px-2"></p>
+                </div>
+                
+                <div class="absolute -bottom-4 md:-bottom-6 left-1/2 -translate-x-1/2 text-4xl md:text-6xl text-rose-400/50 rotate-180">"</div>
+                
+                <div class="mt-6 md:mt-8 flex justify-center space-x-4 md:space-x-6">
+                    <button onclick="prevQuote()" class="btn-touch p-3 md:p-4 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-colors touch-manipulation" aria-label="Previous quote">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
                     </button>
-                    <button onclick="nextQuote()" class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <button onclick="nextQuote()" class="btn-touch p-3 md:p-4 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-colors touch-manipulation" aria-label="Next quote">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -368,66 +537,80 @@
     </section>
 
     <!-- Celebration Section -->
-    <section class="relative py-24 z-10 text-center">
-        <div class="max-w-3xl mx-auto px-4 reveal">
-            <h2 class="font-serif text-4xl md:text-6xl mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-rose-200 to-yellow-200">
+    <section class="relative py-16 md:py-24 z-10 text-center px-4">
+        <div class="max-w-3xl mx-auto reveal">
+            <h2 class="font-serif text-3xl sm:text-4xl md:text-6xl mb-4 md:mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-rose-200 to-yellow-200 px-2">
                 Celebrate Our Love
             </h2>
-            <p class="text-rose-100/80 mb-12 text-lg">Click below to shower us with love and celebration!</p>
+            <p class="text-rose-100/80 mb-8 md:mb-12 text-base md:text-lg px-4">Tap below to shower us with love!</p>
             
-            <button id="celebrate-btn" onclick="launchConfetti()" class="relative group inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white transition-all duration-200 bg-gradient-to-r from-rose-500 to-purple-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 hover:scale-105 hover:shadow-2xl hover:shadow-rose-500/50">
-                <span class="mr-3 text-2xl">💕</span>
+            <button id="celebrate-btn" onclick="launchConfetti()" class="btn-touch group relative inline-flex items-center justify-center text-base md:text-lg font-bold text-white transition-all duration-200 bg-gradient-to-r from-rose-500 to-purple-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 hover:scale-105 hover:shadow-2xl hover:shadow-rose-500/50 active:scale-95 px-8 py-4 md:px-10 md:py-5">
+                <span class="mr-2 text-xl md:text-2xl">💕</span>
                 <span>Celebrate Our Love</span>
-                <div class="absolute inset-0 rounded-full ring-4 ring-white/20 group-hover:ring-white/40 animate-pulse"></div>
+                <div class="absolute inset-0 rounded-full ring-2 md:ring-4 ring-white/20 group-hover:ring-white/40 animate-pulse"></div>
             </button>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="relative z-10 bg-black/40 border-t border-white/10 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <div class="mb-8">
-                <span class="font-script text-4xl text-rose-300">Kavin & Dimpi</span>
+    <footer class="relative z-10 bg-black/40 border-t border-white/10 pt-12 md:pt-16 pb-8 md:pb-12 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="mb-6 md:mb-8">
+                <span class="font-script text-3xl md:text-4xl text-rose-300">Kavin & Dimpi</span>
             </div>
             
-            <div class="flex justify-center space-x-6 mb-8">
-                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer">💌</div>
-                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer">🌹</div>
-                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer">💍</div>
+            <div class="flex justify-center space-x-4 md:space-x-6 mb-6 md:mb-8">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 flex items-center justify-center text-xl md:text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer btn-touch">💌</div>
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 flex items-center justify-center text-xl md:text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer btn-touch">🌹</div>
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 flex items-center justify-center text-xl md:text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer btn-touch">💍</div>
             </div>
 
-            <p class="text-rose-200/60 text-sm mb-4">
+            <p class="text-rose-200/60 text-xs md:text-sm mb-3">
                 Made with <span class="text-red-500 animate-pulse">❤️</span> for Kavin Gam & Dimpi Dutta
             </p>
-            <p class="text-white/30 text-xs">
-                © 2026 Two Years of Eternal Love. All rights reserved.
+            <p class="text-white/30 text-[10px] md:text-xs">
+                © 2026 Two Years of Eternal Love
             </p>
         </div>
         
-        <!-- Wave Animation -->
-        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-            <svg class="relative block w-full h-[60px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <!-- Wave -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none pointer-events-none">
+            <svg class="relative block w-full h-[40px] md:h-[60px]" viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="fill-rose-900/30"></path>
             </svg>
         </div>
     </footer>
 
-    <!-- Audio Element (Hidden) -->
-    <audio id="bg-music" loop>
+    <!-- Audio -->
+    <audio id="bg-music" preload="none" loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        // --- Particle System ---
+        // ===== CONFIGURATION =====
+        const CONFIG = {
+            isTouch: window.matchMedia('(pointer: coarse)').matches,
+            isMobile: window.innerWidth < 768,
+            particleCount: window.innerWidth < 768 ? 30 : 50,
+            confettiCount: window.innerWidth < 768 ? 80 : 150
+        };
+
+        // ===== PARTICLE SYSTEM =====
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
+        let animationId;
         
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            CONFIG.isMobile = window.innerWidth < 768;
         }
-        window.addEventListener('resize', resizeCanvas);
+        
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
         resizeCanvas();
 
         class Particle {
@@ -438,26 +621,30 @@
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + Math.random() * 100;
-                this.speed = 0.5 + Math.random() * 1.5;
-                this.size = Math.random() * 3 + 1;
-                this.opacity = Math.random() * 0.5 + 0.1;
-                this.type = Math.random() > 0.5 ? 'heart' : 'circle';
+                this.speed = 0.3 + Math.random() * (CONFIG.isMobile ? 1 : 1.5);
+                this.size = Math.random() * (CONFIG.isMobile ? 2 : 3) + 1;
+                this.opacity = Math.random() * 0.4 + 0.1;
+                this.type = Math.random() > 0.6 ? 'heart' : 'circle';
                 this.color = `rgba(255, ${100 + Math.random() * 100}, ${150 + Math.random() * 105}, ${this.opacity})`;
+                this.wobble = Math.random() * Math.PI * 2;
             }
             
             update() {
                 this.y -= this.speed;
+                this.wobble += 0.02;
+                this.x += Math.sin(this.wobble) * 0.5;
+                
                 if (this.y < -10) this.reset();
             }
             
             draw() {
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
+                
                 if (this.type === 'circle') {
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 } else {
-                    // Draw heart
-                    const size = this.size * 1.5;
+                    const size = this.size * 1.2;
                     ctx.moveTo(this.x, this.y + size / 4);
                     ctx.quadraticCurveTo(this.x, this.y, this.x + size / 4, this.y);
                     ctx.quadraticCurveTo(this.x + size / 2, this.y, this.x + size / 2, this.y + size / 4);
@@ -470,20 +657,48 @@
             }
         }
 
-        for (let i = 0; i < 50; i++) particles.push(new Particle());
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < CONFIG.particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
 
+        let frameCount = 0;
         function animateParticles() {
+            frameCount++;
+            // Skip frames on mobile for performance
+            if (CONFIG.isMobile && frameCount % 2 !== 0) {
+                animationId = requestAnimationFrame(animateParticles);
+                return;
+            }
+            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => {
                 p.update();
                 p.draw();
             });
-            requestAnimationFrame(animateParticles);
+            animationId = requestAnimationFrame(animateParticles);
         }
+
+        initParticles();
         animateParticles();
 
-        // --- Scroll Reveal ---
-        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        // Pause animation when tab hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                cancelAnimationFrame(animationId);
+            } else {
+                animateParticles();
+            }
+        });
+
+        // ===== SCROLL REVEAL =====
+        const observerOptions = { 
+            threshold: 0.1, 
+            rootMargin: '0px 0px -30px 0px' 
+        };
+        
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -494,33 +709,30 @@
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // --- Quotes System ---
+        // ===== QUOTES SYSTEM =====
         const quotes = [
-            "I saw that you were perfect, and so I loved you. Then I saw that you were not perfect and I loved you even more. — Angelita Lim",
-            "The best thing to hold onto in life is each other. — Audrey Hepburn",
-            "In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine. — Maya Angelou",
-            "Whatever our souls are made of, his and mine are the same. — Emily Brontë",
-            "If I know what love is, it is because of you. — Herman Hesse",
-            "You are my today and all of my tomorrows. — Lee Christopher"
+            "I saw that you were perfect, and so I loved you. Then I saw that you were not perfect and I loved you even more.",
+            "The best thing to hold onto in life is each other.",
+            "In all the world, there is no heart for me like yours.",
+            "Whatever our souls are made of, his and mine are the same.",
+            "If I know what love is, it is because of you.",
+            "You are my today and all of my tomorrows."
         ];
         
         let currentQuote = 0;
         const quoteText = document.getElementById('quote-text');
+        let typeTimeout;
         
         function typeWriter(text, element) {
+            clearTimeout(typeTimeout);
             element.textContent = '';
-            element.style.animation = 'none';
-            element.offsetHeight; /* trigger reflow */
-            element.style.animation = null; 
-            
             let i = 0;
-            element.textContent = '';
             
             function type() {
                 if (i < text.length) {
                     element.textContent += text.charAt(i);
                     i++;
-                    setTimeout(type, 50);
+                    typeTimeout = setTimeout(type, CONFIG.isMobile ? 30 : 40);
                 }
             }
             type();
@@ -540,10 +752,9 @@
             showQuote(currentQuote);
         }
 
-        // Initialize first quote
-        setTimeout(() => showQuote(0), 1000);
+        setTimeout(() => showQuote(0), 500);
 
-        // --- Gallery Lightbox ---
+        // ===== GALLERY LIGHTBOX =====
         const galleryImages = [
             "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=1200&q=90",
             "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&q=90",
@@ -553,91 +764,178 @@
             "https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=1200&q=90"
         ];
         let currentImage = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
 
         function openLightbox(index) {
             currentImage = index;
-            document.getElementById('lightbox-img').src = galleryImages[index];
-            document.getElementById('lightbox').classList.remove('hidden');
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = galleryImages[index];
+            lightbox.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            // Add touch events for swipe
+            lightbox.addEventListener('touchstart', handleTouchStart, {passive: true});
+            lightbox.addEventListener('touchend', handleTouchEnd, {passive: true});
         }
 
         function closeLightbox() {
-            document.getElementById('lightbox').classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.add('hidden');
+            document.body.style.overflow = '';
+            lightbox.removeEventListener('touchstart', handleTouchStart);
+            lightbox.removeEventListener('touchend', handleTouchEnd);
+        }
+
+        function closeLightboxOnBackground(e) {
+            if (e.target.id === 'lightbox') closeLightbox();
         }
 
         function changeImage(direction) {
             currentImage = (currentImage + direction + galleryImages.length) % galleryImages.length;
-            document.getElementById('lightbox-img').src = galleryImages[currentImage];
+            const img = document.getElementById('lightbox-img');
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = galleryImages[currentImage];
+                img.style.opacity = '1';
+            }, 150);
         }
 
-        // Close lightbox on outside click
-        document.getElementById('lightbox').addEventListener('click', function(e) {
-            if (e.target === this) closeLightbox();
-        });
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
 
-        // --- Confetti Celebration ---
-        function launchConfetti() {
-            const colors = ['#ff0000', '#ffd700', '#ff69b4', '#ff1493', '#ffffff'];
-            const confettiCount = 150;
-            const container = document.body;
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
             
-            for (let i = 0; i < confettiCount; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'fixed';
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = Math.random() * 5 + 5 + 'px';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-10px';
-                confetti.style.zIndex = '9999';
-                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-                confetti.style.opacity = Math.random();
-                
-                const duration = Math.random() * 3 + 2;
-                confetti.style.transition = `top ${duration}s ease-out, transform ${duration}s linear`;
-                
-                container.appendChild(confetti);
-                
-                setTimeout(() => {
-                    confetti.style.top = '110vh';
-                    confetti.style.transform = `rotate(${Math.random() * 360 + 720}deg)`;
-                }, 100);
-                
-                setTimeout(() => confetti.remove(), duration * 1000);
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) changeImage(1);
+                else changeImage(-1);
             }
         }
 
-        // --- Music Toggle ---
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('lightbox').classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') changeImage(-1);
+            if (e.key === 'ArrowRight') changeImage(1);
+        });
+
+        // ===== CONFETTI =====
+        function launchConfetti() {
+            const colors = ['#ff0000', '#ffd700', '#ff69b4', '#ff1493', '#ffffff', '#9370db'];
+            const container = document.body;
+            const count = CONFIG.confettiCount;
+            
+            // Haptic feedback if available
+            if (navigator.vibrate) navigator.vibrate(50);
+            
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                const size = Math.random() * 8 + 4;
+                
+                confetti.style.cssText = `
+                    position: fixed;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background-color: ${colors[Math.floor(Math.random() * colors.length)]};
+                    left: ${Math.random() * 100}vw;
+                    top: -10px;
+                    z-index: 9999;
+                    pointer-events: none;
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                    opacity: ${Math.random() * 0.8 + 0.2};
+                `;
+                
+                const duration = Math.random() * 2 + 2;
+                const delay = Math.random() * 0.5;
+                
+                confetti.animate([
+                    { transform: `translateY(0) rotate(0deg) translateX(0)`, opacity: 1 },
+                    { transform: `translateY(${window.innerHeight + 20}px) rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    delay: delay * 1000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                }).onfinish = () => confetti.remove();
+                
+                container.appendChild(confetti);
+            }
+        }
+
+        // ===== MUSIC =====
         let isPlaying = false;
         const music = document.getElementById('bg-music');
         
         function toggleMusic() {
+            const icons = ['music-icon', 'mobile-music-icon'];
+            const texts = ['music-text', 'mobile-music-text'];
+            
             if (isPlaying) {
                 music.pause();
-                document.getElementById('music-icon').textContent = '🎵';
-                document.getElementById('music-text').textContent = 'Play Melody';
+                icons.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = '🎵';
+                });
+                texts.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = 'Play';
+                });
             } else {
                 music.play().catch(e => console.log("Audio play failed:", e));
-                document.getElementById('music-icon').textContent = '⏸';
-                document.getElementById('music-text').textContent = 'Pause Melody';
+                icons.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = '⏸';
+                });
+                texts.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = 'Pause';
+                });
             }
             isPlaying = !isPlaying;
         }
 
-        // --- Smooth Scroll ---
+        // ===== MOBILE MENU =====
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('open');
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+        }
+
+        // ===== UTILITIES =====
         function scrollToSection(id) {
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         }
 
-        // --- Navbar Scroll Effect ---
+        // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if (window.scrollY > 50) {
-                nav.classList.add('bg-black/50', 'backdrop-blur-md');
+                nav.classList.add('bg-black/60', 'backdrop-blur-md', 'shadow-lg');
             } else {
-                nav.classList.remove('bg-black/50', 'backdrop-blur-md');
+                nav.classList.remove('bg-black/60', 'backdrop-blur-md', 'shadow-lg');
             }
+        }, { passive: true });
+
+        // Prevent double-tap zoom on buttons
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                el.click();
+            }, { passive: false });
+        });
+
+        // Handle orientation change
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resizeCanvas, 100);
         });
     </script>
 </body>
