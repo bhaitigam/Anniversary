@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kavin & Dimpi | 2nd Anniversary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom Fonts */
+        .font-script { font-family: 'Great Vibes', cursive; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-sans { font-family: 'Lato', sans-serif; }
+
+        /* Custom Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            70% { transform: scale(1); }
+        }
+
+        @keyframes gradient-xy {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #d4af37; }
+        }
+
+        /* Utility Classes */
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-heartbeat { animation: heartbeat 2s infinite; }
+        .animate-gradient { background-size: 200% 200%; animation: gradient-xy 15s ease infinite; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #2d1b2e; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
+
+        /* Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Timeline Line */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #d4af37, #ec4899, #d4af37);
+            transform: translateX(-50%);
+        }
+
+        /* Gallery Hover */
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Typewriter Effect Container */
+        .typewriter-text {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #d4af37;
+            animation: 
+                typewriter 4s steps(40, end),
+                blink-caret 0.75s step-end infinite;
+        }
+
+        /* Reveal on Scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-900 via-purple-900 to-slate-900 text-white font-sans overflow-x-hidden animate-gradient min-h-screen">
+
+    <!-- Particle Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="font-script text-3xl text-rose-300">K & D</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="hover:text-rose-300 transition-colors px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#story" class="hover:text-rose-300 transition-colors px-3 py-2 rounded-md text-sm font-medium">Our Story</a>
+                        <a href="#gallery" class="hover:text-rose-300 transition-colors px-3 py-2 rounded-md text-sm font-medium">Gallery</a>
+                        <a href="#quotes" class="hover:text-rose-300 transition-colors px-3 py-2 rounded-md text-sm font-medium">Quotes</a>
+                        <button onclick="toggleMusic()" class="flex items-center space-x-2 bg-rose-500/20 hover:bg-rose-500/40 px-4 py-2 rounded-full transition-all border border-rose-400/30">
+                            <span id="music-icon">🎵</span>
+                            <span class="text-sm" id="music-text">Play Melody</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden z-10">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-rose-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style="animation-delay: 2s;"></div>
+            <div class="absolute top-1/2 left-1/2 w-80 h-80 bg-yellow-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style="animation-delay: 4s;"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+            <div class="mb-6 inline-block animate-heartbeat">
+                <svg class="w-16 h-16 text-rose-400 mx-auto drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            </div>
+            
+            <h2 class="text-rose-300 text-lg md:text-xl tracking-[0.3em] uppercase mb-4 font-light animate-fade-in-up">Celebrating</h2>
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-rose-200 via-yellow-200 to-rose-200 drop-shadow-sm animate-fade-in-up" style="animation-delay: 0.2s;">
+                Happy 2nd Anniversary
+            </h1>
+            
+            <div class="flex items-center justify-center space-x-4 mb-8 animate-fade-in-up" style="animation-delay: 0.4s;">
+                <span class="font-script text-4xl md:text-6xl text-rose-200">Kavin Gam</span>
+                <span class="text-3xl md:text-5xl text-rose-400 animate-pulse">❤️</span>
+                <span class="font-script text-4xl md:text-6xl text-rose-200">Dimpi Dutta</span>
+            </div>
+
+            <p class="text-lg md:text-2xl text-rose-100/80 font-light italic mb-12 max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.6s;">
+                "Two years of love, laughter & forever"
+            </p>
+
+            <button onclick="scrollToSection('story')" class="group relative px-8 py-4 bg-gradient-to-r from-rose-500 to-purple-600 rounded-full overflow-hidden shadow-2xl hover:shadow-rose-500/50 transition-all duration-300 animate-fade-in-up" style="animation-delay: 0.8s;">
+                <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full"></div>
+                <span class="relative flex items-center space-x-2 text-white font-semibold tracking-wider">
+                    <span>Our Journey</span>
+                    <svg class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="story" class="relative py-24 z-10">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-script text-5xl md:text-6xl text-rose-300 mb-4">Our Love Story</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-transparent via-rose-400 to-transparent mx-auto"></div>
+            </div>
+
+            <div class="relative timeline-line space-y-12 md:space-y-0">
+                <!-- First Meet -->
+                <div class="relative md:flex items-center justify-between reveal">
+                    <div class="md:w-5/12 md:text-right mb-4 md:mb-0">
+                        <div class="glass-panel p-6 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300 border-rose-300/20">
+                            <h3 class="font-serif text-2xl text-rose-300 mb-2">The First Meet</h3>
+                            <p class="text-rose-100/70 text-sm mb-2">Where it all began</p>
+                            <p class="text-gray-200">Two souls collided in a moment of destiny. The world stopped, and our story began with a smile that lit up the room.</p>
+                        </div>
+                    </div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50">
+                        <span class="text-xl">✨</span>
+                    </div>
+                    <div class="md:w-5/12"></div>
+                </div>
+
+                <!-- First Year -->
+                <div class="relative md:flex items-center justify-between reveal">
+                    <div class="md:w-5/12"></div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50">
+                        <span class="text-xl">💍</span>
+                    </div>
+                    <div class="md:w-5/12 md:pl-8 mb-4 md:mb-0">
+                        <div class="glass-panel p-6 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300 border-rose-300/20">
+                            <h3 class="font-serif text-2xl text-rose-300 mb-2">The First Year</h3>
+                            <p class="text-rose-100/70 text-sm mb-2">Building dreams together</p>
+                            <p class="text-gray-200">Learning to dance in the rain, building our first home together, and discovering that love is not just a feeling, but a choice we make every day.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Year -->
+                <div class="relative md:flex items-center justify-between reveal">
+                    <div class="md:w-5/12 md:text-right mb-4 md:mb-0">
+                        <div class="glass-panel p-6 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300 border-rose-300/20 border-2 border-rose-400/40 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-rose-500 text-xs px-3 py-1 rounded-bl-lg">Current</div>
+                            <h3 class="font-serif text-2xl text-rose-300 mb-2">The Second Year</h3>
+                            <p class="text-rose-100/70 text-sm mb-2">Growing stronger</p>
+                            <p class="text-gray-200">Deeper understanding, stronger bonds. Through every challenge and joy, we've proven that our love is the constant that holds everything together.</p>
+                        </div>
+                    </div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-yellow-400 to-rose-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-yellow-500/50 animate-pulse">
+                        <span class="text-xl">🎉</span>
+                    </div>
+                    <div class="md:w-5/12"></div>
+                </div>
+
+                <!-- Forever -->
+                <div class="relative md:flex items-center justify-between reveal">
+                    <div class="md:w-5/12"></div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-purple-400 to-rose-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-purple-500/50">
+                        <span class="text-xl">∞</span>
+                    </div>
+                    <div class="md:w-5/12 md:pl-8 mb-4 md:mb-0">
+                        <div class="glass-panel p-6 rounded-2xl hover:transform hover:-translate-y-2 transition-all duration-300 border-rose-300/20">
+                            <h3 class="font-serif text-2xl text-rose-300 mb-2">Forever</h3>
+                            <p class="text-rose-100/70 text-sm mb-2">To be continued...</p>
+                            <p class="text-gray-200">This is just the beginning of our eternal story. Every day is a new page, and I can't wait to write the rest with you by my side.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Gallery -->
+    <section id="gallery" class="relative py-24 z-10 bg-black/20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-script text-5xl md:text-6xl text-rose-300 mb-4">Captured Moments</h2>
+                <p class="text-rose-100/60 italic">"Every picture tells a story of us"</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+                <!-- Gallery Item 1 -->
+                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal" onclick="openLightbox(0)">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&q=80" alt="Romantic Couple" class="w-full h-full object-cover transition-transform duration-700">
+                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
+                        <p class="font-serif text-xl text-white">The Beginning</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 2 -->
+                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal md:col-span-2" onclick="openLightbox(1)">
+                    <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&q=80" alt="Wedding Rings" class="w-full h-full object-cover transition-transform duration-700">
+                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
+                        <p class="font-serif text-xl text-white">Promise of Forever</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 3 -->
+                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal md:col-span-2" onclick="openLightbox(2)">
+                    <img src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&q=80" alt="Couple Holding Hands" class="w-full h-full object-cover transition-transform duration-700">
+                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
+                        <p class="font-serif text-xl text-white">Hand in Hand</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 4 -->
+                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal" onclick="openLightbox(3)">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80" alt="Romantic Sunset" class="w-full h-full object-cover transition-transform duration-700">
+                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
+                        <p class="font-serif text-xl text-white">Golden Hour</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 5 -->
+                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal" onclick="openLightbox(4)">
+                    <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80" alt="Couple Laughing" class="w-full h-full object-cover transition-transform duration-700">
+                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
+                        <p class="font-serif text-xl text-white">Pure Joy</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 6 -->
+                <div class="gallery-item relative overflow-hidden rounded-2xl cursor-pointer group reveal md:col-span-2" onclick="openLightbox(5)">
+                    <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=1200&q=80" alt="Dancing Couple" class="w-full h-full object-cover transition-transform duration-700">
+                    <div class="gallery-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6">
+                        <p class="font-serif text-xl text-white">Dance of Love</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-sm flex items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <button onclick="changeImage(-1)" class="absolute left-6 text-white/70 hover:text-white transition-colors">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button onclick="changeImage(1)" class="absolute right-6 text-white/70 hover:text-white transition-colors">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+        <img id="lightbox-img" src="" alt="Gallery Image" class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl">
+    </div>
+
+    <!-- Quotes Section -->
+    <section id="quotes" class="relative py-24 z-10 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-rose-900/50 via-purple-900/50 to-rose-900/50"></div>
+        <div class="max-w-4xl mx-auto px-4 relative">
+            <div class="text-center mb-12 reveal">
+                <h2 class="font-script text-5xl md:text-6xl text-rose-300 mb-4">Words of Love</h2>
+            </div>
+            
+            <div class="glass-panel rounded-3xl p-8 md:p-12 text-center relative reveal">
+                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-6xl text-rose-400 opacity-50">"</div>
+                <div id="quote-container" class="min-h-[200px] flex items-center justify-center">
+                    <p id="quote-text" class="font-serif text-2xl md:text-4xl text-rose-100 leading-relaxed typewriter-text"></p>
+                </div>
+                <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-6xl text-rose-400 opacity-50 rotate-180">"</div>
+                
+                <div class="mt-8 flex justify-center space-x-4">
+                    <button onclick="prevQuote()" class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button onclick="nextQuote()" class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Celebration Section -->
+    <section class="relative py-24 z-10 text-center">
+        <div class="max-w-3xl mx-auto px-4 reveal">
+            <h2 class="font-serif text-4xl md:text-6xl mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-rose-200 to-yellow-200">
+                Celebrate Our Love
+            </h2>
+            <p class="text-rose-100/80 mb-12 text-lg">Click below to shower us with love and celebration!</p>
+            
+            <button id="celebrate-btn" onclick="launchConfetti()" class="relative group inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white transition-all duration-200 bg-gradient-to-r from-rose-500 to-purple-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 hover:scale-105 hover:shadow-2xl hover:shadow-rose-500/50">
+                <span class="mr-3 text-2xl">💕</span>
+                <span>Celebrate Our Love</span>
+                <div class="absolute inset-0 rounded-full ring-4 ring-white/20 group-hover:ring-white/40 animate-pulse"></div>
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 bg-black/40 border-t border-white/10 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="mb-8">
+                <span class="font-script text-4xl text-rose-300">Kavin & Dimpi</span>
+            </div>
+            
+            <div class="flex justify-center space-x-6 mb-8">
+                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer">💌</div>
+                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer">🌹</div>
+                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer">💍</div>
+            </div>
+
+            <p class="text-rose-200/60 text-sm mb-4">
+                Made with <span class="text-red-500 animate-pulse">❤️</span> for Kavin Gam & Dimpi Dutta
+            </p>
+            <p class="text-white/30 text-xs">
+                © 2026 Two Years of Eternal Love. All rights reserved.
+            </p>
+        </div>
+        
+        <!-- Wave Animation -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+            <svg class="relative block w-full h-[60px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="fill-rose-900/30"></path>
+            </svg>
+        </div>
+    </footer>
+
+    <!-- Audio Element (Hidden) -->
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // --- Particle System ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.speed = 0.5 + Math.random() * 1.5;
+                this.size = Math.random() * 3 + 1;
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.type = Math.random() > 0.5 ? 'heart' : 'circle';
+                this.color = `rgba(255, ${100 + Math.random() * 100}, ${150 + Math.random() * 105}, ${this.opacity})`;
+            }
+            
+            update() {
+                this.y -= this.speed;
+                if (this.y < -10) this.reset();
+            }
+            
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                if (this.type === 'circle') {
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                } else {
+                    // Draw heart
+                    const size = this.size * 1.5;
+                    ctx.moveTo(this.x, this.y + size / 4);
+                    ctx.quadraticCurveTo(this.x, this.y, this.x + size / 4, this.y);
+                    ctx.quadraticCurveTo(this.x + size / 2, this.y, this.x + size / 2, this.y + size / 4);
+                    ctx.quadraticCurveTo(this.x + size / 2, this.y, this.x + size * 3/4, this.y);
+                    ctx.quadraticCurveTo(this.x + size, this.y, this.x + size, this.y + size / 4);
+                    ctx.quadraticCurveTo(this.x + size, this.y + size / 2, this.x + size * 1/2, this.y + size * 3/4);
+                    ctx.quadraticCurveTo(this.x, this.y + size / 2, this.x, this.y + size / 4);
+                }
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // --- Scroll Reveal ---
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- Quotes System ---
+        const quotes = [
+            "I saw that you were perfect, and so I loved you. Then I saw that you were not perfect and I loved you even more. — Angelita Lim",
+            "The best thing to hold onto in life is each other. — Audrey Hepburn",
+            "In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine. — Maya Angelou",
+            "Whatever our souls are made of, his and mine are the same. — Emily Brontë",
+            "If I know what love is, it is because of you. — Herman Hesse",
+            "You are my today and all of my tomorrows. — Lee Christopher"
+        ];
+        
+        let currentQuote = 0;
+        const quoteText = document.getElementById('quote-text');
+        
+        function typeWriter(text, element) {
+            element.textContent = '';
+            element.style.animation = 'none';
+            element.offsetHeight; /* trigger reflow */
+            element.style.animation = null; 
+            
+            let i = 0;
+            element.textContent = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                }
+            }
+            type();
+        }
+
+        function showQuote(index) {
+            typeWriter(quotes[index], quoteText);
+        }
+
+        function nextQuote() {
+            currentQuote = (currentQuote + 1) % quotes.length;
+            showQuote(currentQuote);
+        }
+
+        function prevQuote() {
+            currentQuote = (currentQuote - 1 + quotes.length) % quotes.length;
+            showQuote(currentQuote);
+        }
+
+        // Initialize first quote
+        setTimeout(() => showQuote(0), 1000);
+
+        // --- Gallery Lightbox ---
+        const galleryImages = [
+            "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=1200&q=90",
+            "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&q=90",
+            "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&q=90",
+            "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=90",
+            "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=1200&q=90",
+            "https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=1200&q=90"
+        ];
+        let currentImage = 0;
+
+        function openLightbox(index) {
+            currentImage = index;
+            document.getElementById('lightbox-img').src = galleryImages[index];
+            document.getElementById('lightbox').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function changeImage(direction) {
+            currentImage = (currentImage + direction + galleryImages.length) % galleryImages.length;
+            document.getElementById('lightbox-img').src = galleryImages[currentImage];
+        }
+
+        // Close lightbox on outside click
+        document.getElementById('lightbox').addEventListener('click', function(e) {
+            if (e.target === this) closeLightbox();
+        });
+
+        // --- Confetti Celebration ---
+        function launchConfetti() {
+            const colors = ['#ff0000', '#ffd700', '#ff69b4', '#ff1493', '#ffffff'];
+            const confettiCount = 150;
+            const container = document.body;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 5 + 5 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.zIndex = '9999';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.opacity = Math.random();
+                
+                const duration = Math.random() * 3 + 2;
+                confetti.style.transition = `top ${duration}s ease-out, transform ${duration}s linear`;
+                
+                container.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.style.top = '110vh';
+                    confetti.style.transform = `rotate(${Math.random() * 360 + 720}deg)`;
+                }, 100);
+                
+                setTimeout(() => confetti.remove(), duration * 1000);
+            }
+        }
+
+        // --- Music Toggle ---
+        let isPlaying = false;
+        const music = document.getElementById('bg-music');
+        
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                document.getElementById('music-icon').textContent = '🎵';
+                document.getElementById('music-text').textContent = 'Play Melody';
+            } else {
+                music.play().catch(e => console.log("Audio play failed:", e));
+                document.getElementById('music-icon').textContent = '⏸';
+                document.getElementById('music-text').textContent = 'Pause Melody';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- Smooth Scroll ---
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Navbar Scroll Effect ---
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-black/50', 'backdrop-blur-md');
+            } else {
+                nav.classList.remove('bg-black/50', 'backdrop-blur-md');
+            }
+        });
+    </script>
+</body>
+</html>
