@@ -40,17 +40,17 @@
         .font-serif { font-family: 'Playfair Display', serif; }
         .font-sans { font-family: 'Lato', sans-serif; }
 
-        /* Animations */
+        /* Enhanced Animations */
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
         }
         
         @keyframes heartbeat {
             0% { transform: scale(1); }
-            14% { transform: scale(1.1); }
+            14% { transform: scale(1.15); }
             28% { transform: scale(1); }
-            42% { transform: scale(1.1); }
+            42% { transform: scale(1.15); }
             70% { transform: scale(1); }
         }
 
@@ -60,7 +60,7 @@
         }
 
         @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -74,6 +74,53 @@
             50% { box-shadow: 0 0 40px rgba(244, 63, 94, 0.8); }
         }
 
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glow-text {
+            0%, 100% { text-shadow: 0 0 10px rgba(244, 63, 94, 0.5), 0 0 20px rgba(244, 63, 94, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(244, 63, 94, 0.8), 0 0 30px rgba(244, 63, 94, 0.5); }
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+        }
+
+        @keyframes slide-in-left {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slide-in-right {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes scale-in {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes float-particle {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+            25% { transform: translate(10px, -20px) scale(1.1); opacity: 0.8; }
+            50% { transform: translate(-5px, -40px) scale(0.9); opacity: 1; }
+            75% { transform: translate(15px, -20px) scale(1.05); opacity: 0.8; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
         /* Utility Classes */
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-heartbeat { animation: heartbeat 2s infinite; }
@@ -83,12 +130,25 @@
             background-size: 1000px 100%;
             animation: shimmer 2s infinite;
         }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-bounce-subtle { animation: bounce-subtle 3s ease-in-out infinite; }
+        .animate-glow { animation: glow-text 2s ease-in-out infinite; }
+        .animate-morph { animation: morph 8s ease-in-out infinite; }
+        .animate-float-particle { animation: float-particle 4s ease-in-out infinite; }
+        .animate-twinkle { animation: twinkle 3s ease-in-out infinite; }
         
         .glass-panel {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .glass-panel-strong {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         /* Particle Canvas */
@@ -109,8 +169,9 @@
             left: 24px;
             top: 0;
             bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, #d4af37, #ec4899, #d4af37);
+            width: 3px;
+            background: linear-gradient(to bottom, #d4af37, #ec4899, #d4af37, #ec4899);
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
         }
         
         @media (min-width: 768px) {
@@ -124,16 +185,23 @@
         .gallery-item {
             position: relative;
             overflow: hidden;
-            border-radius: 12px;
+            border-radius: 16px;
             cursor: pointer;
             touch-action: manipulation;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(236, 72, 153, 0.3);
         }
         
         .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .gallery-item:active img {
@@ -152,12 +220,12 @@
         .gallery-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to top, rgba(136, 19, 55, 0.9), transparent 60%);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s ease;
             display: flex;
             align-items: flex-end;
-            padding: 1rem;
+            padding: 1.5rem;
         }
 
         /* Touch-friendly buttons */
@@ -166,6 +234,16 @@
             min-width: 48px;
             padding: 12px 24px;
             touch-action: manipulation;
+            transition: all 0.3s ease;
+        }
+
+        .btn-touch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-touch:active {
+            transform: translateY(0);
         }
 
         /* Typewriter */
@@ -192,10 +270,40 @@
             transform: translateY(0);
         }
 
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
         /* Mobile Menu */
         .mobile-menu {
             transform: translateX(100%);
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .mobile-menu.open {
             transform: translateX(0);
@@ -227,9 +335,9 @@
         .safe-x { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
 
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #2d1b2e; }
-        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #d4af37, #ec4899); border-radius: 4px; }
 
         /* Reduced motion */
         @media (prefers-reduced-motion: reduce) {
@@ -240,8 +348,79 @@
             }
         }
 
-        /* Android Chrome address bar color */
-        .theme-color-meta { display: none; }
+        /* Date Badge */
+        .date-badge {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(236, 72, 153, 0.2));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Counter Animation */
+        .counter-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .counter-box:hover {
+            transform: translateY(-5px);
+            border-color: rgba(236, 72, 153, 0.5);
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.2);
+        }
+
+        /* Floating Hearts Background */
+        .floating-heart {
+            position: absolute;
+            color: rgba(244, 63, 94, 0.3);
+            animation: float-particle 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* Gradient Text Animation */
+        .gradient-text-animated {
+            background: linear-gradient(90deg, #fecdd3, #fde047, #fecdd3, #c084fc, #fecdd3);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Timeline Node Pulse */
+        .timeline-node {
+            position: relative;
+        }
+        .timeline-node::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(236, 72, 153, 0.5);
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* Card Hover Effects */
+        .hover-lift {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Quote Card Glow */
+        .quote-glow {
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.2), inset 0 0 30px rgba(255,255,255,0.05);
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-rose-950 via-purple-950 to-slate-950 text-white font-sans animate-gradient min-h-screen safe-top safe-bottom safe-x">
@@ -249,29 +428,51 @@
     <!-- Particle Canvas -->
     <canvas id="particle-canvas"></canvas>
 
+    <!-- Floating Background Elements -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="floating-heart text-6xl top-20 left-10" style="animation-delay: 0s;">💕</div>
+        <div class="floating-heart text-4xl top-40 right-20" style="animation-delay: 2s;">💖</div>
+        <div class="floating-heart text-5xl bottom-40 left-1/4" style="animation-delay: 4s;">💗</div>
+        <div class="floating-heart text-3xl top-1/3 right-1/3" style="animation-delay: 1s;">💝</div>
+        <div class="floating-heart text-4xl bottom-20 right-10" style="animation-delay: 3s;">💕</div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+    <nav class="fixed w-full z-50 top-0 transition-all duration-500" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-20">
                 <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center">
-                    <span class="font-script text-2xl md:text-3xl text-rose-300 no-select">K & D</span>
+                <div class="flex-shrink-0 flex items-center group cursor-pointer" onclick="scrollToSection('home')">
+                    <span class="font-script text-2xl md:text-3xl text-rose-300 no-select group-hover:scale-110 transition-transform duration-300">K & D</span>
+                    <span class="ml-2 text-xs text-rose-200/60 hidden sm:block opacity-0 group-hover:opacity-100 transition-opacity">Est. 2024</span>
                 </div>
                 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#home" class="text-sm font-medium hover:text-rose-300 transition-colors px-3 py-2">Home</a>
-                    <a href="#story" class="text-sm font-medium hover:text-rose-300 transition-colors px-3 py-2">Our Story</a>
-                    <a href="#gallery" class="text-sm font-medium hover:text-rose-300 transition-colors px-3 py-2">Gallery</a>
-                    <a href="#quotes" class="text-sm font-medium hover:text-rose-300 transition-colors px-3 py-2">Quotes</a>
-                    <button onclick="toggleMusic()" class="btn-touch flex items-center space-x-2 bg-rose-500/20 hover:bg-rose-500/40 rounded-full border border-rose-400/30 transition-all">
-                        <span id="music-icon">🎵</span>
-                        <span class="text-sm hidden lg:inline" id="music-text">Play</span>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-sm font-medium hover:text-rose-300 transition-all hover:scale-105 px-3 py-2 relative group">
+                        Home
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-rose-400 transition-all group-hover:w-full"></span>
+                    </a>
+                    <a href="#story" class="text-sm font-medium hover:text-rose-300 transition-all hover:scale-105 px-3 py-2 relative group">
+                        Our Story
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-rose-400 transition-all group-hover:w-full"></span>
+                    </a>
+                    <a href="#gallery" class="text-sm font-medium hover:text-rose-300 transition-all hover:scale-105 px-3 py-2 relative group">
+                        Gallery
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-rose-400 transition-all group-hover:w-full"></span>
+                    </a>
+                    <a href="#quotes" class="text-sm font-medium hover:text-rose-300 transition-all hover:scale-105 px-3 py-2 relative group">
+                        Quotes
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-rose-400 transition-all group-hover:w-full"></span>
+                    </a>
+                    <button onclick="toggleMusic()" class="btn-touch flex items-center space-x-2 bg-gradient-to-r from-rose-500/20 to-purple-500/20 hover:from-rose-500/40 hover:to-purple-500/40 rounded-full border border-rose-400/30 transition-all hover:scale-105">
+                        <span id="music-icon" class="animate-bounce-subtle">🎵</span>
+                        <span class="text-sm hidden lg:inline" id="music-text">Play Love Song</span>
                     </button>
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <button onclick="toggleMobileMenu()" class="md:hidden btn-touch flex items-center justify-center rounded-lg bg-white/10" aria-label="Menu">
+                <button onclick="toggleMobileMenu()" class="md:hidden btn-touch flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 transition-colors" aria-label="Menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -283,20 +484,20 @@
         <div id="mobile-menu" class="mobile-menu fixed inset-0 z-50 bg-black/95 backdrop-blur-xl md:hidden flex flex-col">
             <div class="flex justify-between items-center p-4 border-b border-white/10">
                 <span class="font-script text-2xl text-rose-300">K & D</span>
-                <button onclick="toggleMobileMenu()" class="btn-touch rounded-lg bg-white/10 flex items-center justify-center" aria-label="Close">
+                <button onclick="toggleMobileMenu()" class="btn-touch rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors" aria-label="Close">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-6 p-8">
-                <a href="#home" onclick="toggleMobileMenu()" class="text-2xl font-serif hover:text-rose-300 transition-colors">Home</a>
-                <a href="#story" onclick="toggleMobileMenu()" class="text-2xl font-serif hover:text-rose-300 transition-colors">Our Story</a>
-                <a href="#gallery" onclick="toggleMobileMenu()" class="text-2xl font-serif hover:text-rose-300 transition-colors">Gallery</a>
-                <a href="#quotes" onclick="toggleMobileMenu()" class="text-2xl font-serif hover:text-rose-300 transition-colors">Quotes</a>
-                <button onclick="toggleMusic(); toggleMobileMenu();" class="btn-touch mt-4 flex items-center space-x-3 bg-rose-500/30 px-8 py-4 rounded-full border border-rose-400/50">
-                    <span id="mobile-music-icon">🎵</span>
-                    <span class="text-lg">Play Melody</span>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-8 p-8">
+                <a href="#home" onclick="toggleMobileMenu()" class="text-3xl font-serif hover:text-rose-300 transition-all hover:scale-110">Home</a>
+                <a href="#story" onclick="toggleMobileMenu()" class="text-3xl font-serif hover:text-rose-300 transition-all hover:scale-110">Our Story</a>
+                <a href="#gallery" onclick="toggleMobileMenu()" class="text-3xl font-serif hover:text-rose-300 transition-all hover:scale-110">Gallery</a>
+                <a href="#quotes" onclick="toggleMobileMenu()" class="text-3xl font-serif hover:text-rose-300 transition-all hover:scale-110">Quotes</a>
+                <button onclick="toggleMusic(); toggleMobileMenu();" class="btn-touch mt-6 flex items-center space-x-3 bg-gradient-to-r from-rose-500/30 to-purple-500/30 px-10 py-4 rounded-full border border-rose-400/50 hover:scale-105 transition-transform">
+                    <span id="mobile-music-icon" class="text-2xl">🎵</span>
+                    <span class="text-xl">Play Melody</span>
                 </button>
             </div>
         </div>
@@ -304,42 +505,70 @@
 
     <!-- Hero Section -->
     <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden z-10 px-4">
-        <!-- Background Blobs -->
+        <!-- Animated Background Blobs -->
         <div class="absolute inset-0 z-0 pointer-events-none">
-            <div class="absolute top-20 -left-20 w-64 h-64 md:w-96 md:h-96 bg-rose-500/30 rounded-full mix-blend-screen filter blur-3xl animate-float"></div>
+            <div class="absolute top-20 -left-20 w-64 h-64 md:w-96 md:h-96 bg-rose-500/30 rounded-full mix-blend-screen filter blur-3xl animate-float animate-morph"></div>
             <div class="absolute bottom-20 -right-20 w-80 h-80 md:w-[500px] md:h-[500px] bg-purple-500/30 rounded-full mix-blend-screen filter blur-3xl animate-float" style="animation-delay: 2s;"></div>
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-96 md:h-96 bg-yellow-500/20 rounded-full mix-blend-screen filter blur-3xl animate-float" style="animation-delay: 4s;"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-96 md:h-96 bg-yellow-500/20 rounded-full mix-blend-screen filter blur-3xl animate-float animate-morph" style="animation-delay: 4s;"></div>
+            <div class="absolute top-1/3 right-1/4 w-48 h-48 bg-pink-500/20 rounded-full mix-blend-screen filter blur-2xl animate-float" style="animation-delay: 1s;"></div>
         </div>
 
         <div class="relative z-10 text-center max-w-5xl mx-auto w-full">
+            <!-- Date Badge -->
+            <div class="mb-6 inline-flex items-center gap-2 date-badge rounded-full px-4 py-2 animate-fade-in-up">
+                <span class="text-rose-300 text-sm font-medium">📅 Today: February 23, 2026</span>
+                <span class="w-1.5 h-1.5 bg-rose-400 rounded-full animate-pulse"></span>
+                <span class="text-yellow-300 text-sm font-medium">Celebrating 2 Years</span>
+            </div>
+
             <!-- Heart Icon -->
             <div class="mb-4 md:mb-6 inline-block animate-heartbeat">
-                <svg class="w-12 h-12 md:w-16 md:h-16 text-rose-400 mx-auto drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-14 h-14 md:w-20 md:h-20 text-rose-400 mx-auto drop-shadow-lg filter" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
             </div>
             
-            <h2 class="text-rose-300 text-xs md:text-sm uppercase tracking-[0.3em] mb-2 md:mb-4 font-light animate-fade-in-up">Celebrating</h2>
+            <h2 class="text-rose-300 text-xs md:text-sm uppercase tracking-[0.4em] mb-2 md:mb-4 font-light animate-fade-in-up">Celebrating Love</h2>
             
-            <h1 class="font-serif text-responsive-hero font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-rose-200 via-yellow-200 to-rose-200 drop-shadow-sm animate-fade-in-up px-2">
+            <h1 class="font-serif text-responsive-hero font-bold mb-4 md:mb-6 gradient-text-animated drop-shadow-sm animate-fade-in-up px-2">
                 Happy 2nd Anniversary
             </h1>
             
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-6 md:mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
-                <span class="font-script text-3xl sm:text-4xl md:text-6xl text-rose-200">Kavin Gam</span>
-                <span class="text-2xl sm:text-3xl md:text-5xl text-rose-400 animate-pulse">❤️</span>
-                <span class="font-script text-3xl sm:text-4xl md:text-6xl text-rose-200">Dimpi Dutta</span>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 mb-6 md:mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <span class="font-script text-4xl sm:text-5xl md:text-7xl text-rose-200 hover:scale-105 transition-transform cursor-default">Kavin Gam</span>
+                <span class="text-3xl sm:text-4xl md:text-6xl animate-pulse">💕</span>
+                <span class="font-script text-4xl sm:text-5xl md:text-7xl text-rose-200 hover:scale-105 transition-transform cursor-default">Dimpi Dutta</span>
             </div>
 
             <p class="text-responsive-body text-rose-100/80 font-light italic mb-8 md:mb-12 max-w-2xl mx-auto px-4 animate-fade-in-up" style="animation-delay: 0.4s;">
-                "Two years of love, laughter & forever"
+                "Two years of love, laughter & forever moments. Here's to eternity together."
             </p>
 
-            <button onclick="scrollToSection('story')" class="btn-touch group relative bg-gradient-to-r from-rose-500 to-purple-600 rounded-full overflow-hidden shadow-xl hover:shadow-rose-500/50 transition-all duration-300 animate-fade-in-up animate-pulse" style="animation-delay: 0.6s;">
-                <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full"></div>
-                <span class="relative flex items-center space-x-2 text-white font-semibold text-sm md:text-base tracking-wider px-6 py-3">
+            <!-- Love Counter -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-8 md:mb-12 animate-fade-in-up" style="animation-delay: 0.5s;">
+                <div class="counter-box rounded-xl p-4 text-center">
+                    <div class="text-2xl md:text-3xl font-bold text-rose-300" id="days-count">730</div>
+                    <div class="text-xs text-rose-200/60 uppercase tracking-wider">Days</div>
+                </div>
+                <div class="counter-box rounded-xl p-4 text-center">
+                    <div class="text-2xl md:text-3xl font-bold text-yellow-300" id="hours-count">17,520</div>
+                    <div class="text-xs text-rose-200/60 uppercase tracking-wider">Hours</div>
+                </div>
+                <div class="counter-box rounded-xl p-4 text-center">
+                    <div class="text-2xl md:text-3xl font-bold text-purple-300" id="minutes-count">1M+</div>
+                    <div class="text-xs text-rose-200/60 uppercase tracking-wider">Minutes</div>
+                </div>
+                <div class="counter-box rounded-xl p-4 text-center">
+                    <div class="text-2xl md:text-3xl font-bold text-pink-300">∞</div>
+                    <div class="text-xs text-rose-200/60 uppercase tracking-wider">Love</div>
+                </div>
+            </div>
+
+            <button onclick="scrollToSection('story')" class="btn-touch group relative bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 rounded-full overflow-hidden shadow-xl hover:shadow-rose-500/50 transition-all duration-300 animate-fade-in-up animate-pulse" style="animation-delay: 0.6s;">
+                <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-700 skew-x-12 -translate-x-full"></div>
+                <span class="relative flex items-center space-x-3 text-white font-semibold text-sm md:text-base tracking-wider px-8 py-4">
                     <span>Our Journey</span>
-                    <svg class="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
                     </svg>
                 </span>
@@ -348,71 +577,80 @@
     </section>
 
     <!-- Timeline Section -->
-    <section id="story" class="relative py-16 md:py-24 z-10 px-4">
+    <section id="story" class="relative py-20 md:py-32 z-10 px-4">
         <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-12 md:mb-16 reveal">
-                <h2 class="font-script text-4xl md:text-6xl text-rose-300 mb-4">Our Love Story</h2>
-                <div class="w-20 md:w-24 h-1 bg-gradient-to-r from-transparent via-rose-400 to-transparent mx-auto"></div>
+            <div class="text-center mb-16 md:mb-20 reveal">
+                <span class="text-rose-300 text-sm uppercase tracking-[0.3em] mb-2 block">Through The Years</span>
+                <h2 class="font-script text-5xl md:text-7xl text-rose-300 mb-4 animate-glow">Our Love Story</h2>
+                <div class="w-32 h-1 bg-gradient-to-r from-transparent via-rose-400 to-transparent mx-auto mb-4"></div>
+                <p class="text-rose-100/60 italic">Every moment with you is a treasure</p>
             </div>
 
-            <div class="relative timeline-line space-y-8 md:space-y-0">
+            <div class="relative timeline-line space-y-12 md:space-y-0">
                 <!-- First Meet -->
-                <div class="relative md:flex items-center justify-between reveal pl-16 md:pl-0">
-                    <div class="md:w-5/12 md:text-right mb-2 md:mb-0">
-                        <div class="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl hover:transform hover:-translate-y-1 transition-all duration-300">
-                            <h3 class="font-serif text-xl md:text-2xl text-rose-300 mb-1 md:mb-2">The First Meet</h3>
-                            <p class="text-rose-100/70 text-xs md:text-sm mb-2">Where it all began</p>
-                            <p class="text-gray-200 text-sm md:text-base leading-relaxed">Two souls collided in a moment of destiny. The world stopped, and our story began with a smile.</p>
+                <div class="relative md:flex items-center justify-between reveal-left pl-16 md:pl-0 group">
+                    <div class="md:w-5/12 md:text-right mb-4 md:mb-0">
+                        <div class="glass-panel p-6 md:p-8 rounded-2xl hover-lift relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-rose-500/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                            <span class="text-rose-400 text-sm font-bold tracking-wider uppercase mb-2 block">February 2024</span>
+                            <h3 class="font-serif text-2xl md:text-3xl text-rose-300 mb-2">The First Meet</h3>
+                            <p class="text-rose-100/70 text-sm mb-3 italic">Where destiny brought us together</p>
+                            <p class="text-gray-200 text-base leading-relaxed">Two souls collided in a moment of pure magic. The world stopped spinning, time stood still, and our forever began with a single smile that lit up the universe.</p>
                         </div>
                     </div>
-                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50">
-                        <span class="text-lg md:text-xl">✨</span>
+                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-12 h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50 timeline-node group-hover:scale-110 transition-transform">
+                        <span class="text-xl">✨</span>
                     </div>
                     <div class="md:w-5/12"></div>
                 </div>
 
                 <!-- First Year -->
-                <div class="relative md:flex items-center justify-between reveal pl-16 md:pl-0">
+                <div class="relative md:flex items-center justify-between reveal-right pl-16 md:pl-0 group">
                     <div class="md:w-5/12 md:order-1 order-2"></div>
-                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50">
-                        <span class="text-lg md:text-xl">💍</span>
+                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-12 h-12 bg-gradient-to-br from-rose-400 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-rose-500/50 timeline-node group-hover:scale-110 transition-transform">
+                        <span class="text-xl">💍</span>
                     </div>
-                    <div class="md:w-5/12 md:pl-8 mb-2 md:mb-0 md:order-2 order-1">
-                        <div class="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl hover:transform hover:-translate-y-1 transition-all duration-300">
-                            <h3 class="font-serif text-xl md:text-2xl text-rose-300 mb-1 md:mb-2">The First Year</h3>
-                            <p class="text-rose-100/70 text-xs md:text-sm mb-2">Building dreams</p>
-                            <p class="text-gray-200 text-sm md:text-base leading-relaxed">Learning to dance in the rain, building our home, and choosing love every single day.</p>
+                    <div class="md:w-5/12 md:pl-8 mb-4 md:mb-0 md:order-2 order-1">
+                        <div class="glass-panel p-6 md:p-8 rounded-2xl hover-lift relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-20 h-20 bg-purple-500/10 rounded-full -translate-y-1/2 -translate-x-1/2"></div>
+                            <span class="text-purple-400 text-sm font-bold tracking-wider uppercase mb-2 block">2024 - 2025</span>
+                            <h3 class="font-serif text-2xl md:text-3xl text-rose-300 mb-2">The First Year</h3>
+                            <p class="text-rose-100/70 text-sm mb-3 italic">Building our foundation of love</p>
+                            <p class="text-gray-200 text-base leading-relaxed">Learning to dance in the rain, building our dreams together, and choosing love every single day. We grew together, laughed together, and fell deeper in love.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Second Year -->
-                <div class="relative md:flex items-center justify-between reveal pl-16 md:pl-0">
-                    <div class="md:w-5/12 md:text-right mb-2 md:mb-0">
-                        <div class="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl hover:transform hover:-translate-y-1 transition-all duration-300 border-2 border-rose-400/40 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-rose-500 text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-bl-lg font-bold">NOW</div>
-                            <h3 class="font-serif text-xl md:text-2xl text-rose-300 mb-1 md:mb-2">The Second Year</h3>
-                            <p class="text-rose-100/70 text-xs md:text-sm mb-2">Growing stronger</p>
-                            <p class="text-gray-200 text-sm md:text-base leading-relaxed">Deeper understanding, stronger bonds. Our love is the constant through every joy.</p>
+                <div class="relative md:flex items-center justify-between reveal-left pl-16 md:pl-0 group">
+                    <div class="md:w-5/12 md:text-right mb-4 md:mb-0">
+                        <div class="glass-panel p-6 md:p-8 rounded-2xl hover-lift border-2 border-rose-400/40 relative overflow-hidden bg-gradient-to-br from-rose-500/10 to-purple-500/10">
+                            <div class="absolute top-0 right-0 bg-gradient-to-r from-rose-500 to-purple-600 text-xs px-4 py-1.5 rounded-bl-xl font-bold shadow-lg">TODAY • FEB 23, 2026</div>
+                            <span class="text-yellow-400 text-sm font-bold tracking-wider uppercase mb-2 block mt-4">Year Two</span>
+                            <h3 class="font-serif text-2xl md:text-3xl text-rose-300 mb-2">Growing Stronger</h3>
+                            <p class="text-rose-100/70 text-sm mb-3 italic">Deeper understanding, unbreakable bond</p>
+                            <p class="text-gray-200 text-base leading-relaxed">Our love has become the constant through every joy and challenge. Two years of choosing each other, every single day. The best is yet to come.</p>
                         </div>
                     </div>
-                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-yellow-400 to-rose-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-yellow-500/50 animate-pulse">
-                        <span class="text-lg md:text-xl">🎉</span>
+                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-12 h-12 bg-gradient-to-br from-yellow-400 via-rose-500 to-purple-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-yellow-500/50 animate-pulse timeline-node">
+                        <span class="text-xl">🎉</span>
                     </div>
                     <div class="md:w-5/12"></div>
                 </div>
 
                 <!-- Forever -->
-                <div class="relative md:flex items-center justify-between reveal pl-16 md:pl-0">
+                <div class="relative md:flex items-center justify-between reveal-right pl-16 md:pl-0 group">
                     <div class="md:w-5/12 md:order-1 order-2"></div>
-                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-400 to-rose-600 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-purple-500/50">
-                        <span class="text-lg md:text-xl">∞</span>
+                    <div class="absolute left-0 md:left-1/2 top-0 md:top-1/2 md:-translate-y-1/2 w-12 h-12 bg-gradient-to-br from-purple-400 via-rose-500 to-yellow-400 rounded-full border-4 border-slate-900 z-10 flex items-center justify-center shadow-lg shadow-purple-500/50 timeline-node group-hover:scale-110 transition-transform">
+                        <span class="text-xl text-2xl">∞</span>
                     </div>
-                    <div class="md:w-5/12 md:pl-8 mb-2 md:mb-0 md:order-2 order-1">
-                        <div class="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl hover:transform hover:-translate-y-1 transition-all duration-300">
-                            <h3 class="font-serif text-xl md:text-2xl text-rose-300 mb-1 md:mb-2">Forever</h3>
-                            <p class="text-rose-100/70 text-xs md:text-sm mb-2">To be continued...</p>
-                            <p class="text-gray-200 text-sm md:text-base leading-relaxed">Every day is a new page. I can't wait to write the rest with you.</p>
+                    <div class="md:w-5/12 md:pl-8 mb-4 md:mb-0 md:order-2 order-1">
+                        <div class="glass-panel p-6 md:p-8 rounded-2xl hover-lift relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-purple-500/5"></div>
+                            <span class="text-rose-400 text-sm font-bold tracking-wider uppercase mb-2 block">Forever</span>
+                            <h3 class="font-serif text-2xl md:text-3xl text-rose-300 mb-2">To Be Continued...</h3>
+                            <p class="text-rose-100/70 text-sm mb-3 italic">Our story is just beginning</p>
+                            <p class="text-gray-200 text-base leading-relaxed">Every day is a new page in our book of love. I cannot wait to write the rest of forever with you by my side. Here's to eternity, my love.</p>
                         </div>
                     </div>
                 </div>
@@ -421,48 +659,67 @@
     </section>
 
     <!-- Photo Gallery -->
-    <section id="gallery" class="relative py-16 md:py-24 z-10 bg-black/20 px-4">
+    <section id="gallery" class="relative py-20 md:py-32 z-10 bg-black/20 px-4">
         <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-10 md:mb-16 reveal">
-                <h2 class="font-script text-4xl md:text-6xl text-rose-300 mb-3 md:mb-4">Captured Moments</h2>
-                <p class="text-rose-100/60 italic text-sm md:text-base">"Every picture tells a story of us"</p>
+            <div class="text-center mb-12 md:mb-16 reveal">
+                <span class="text-rose-300 text-sm uppercase tracking-[0.3em] mb-2 block">Memories</span>
+                <h2 class="font-script text-5xl md:text-7xl text-rose-300 mb-4">Captured Moments</h2>
+                <p class="text-rose-100/60 italic text-lg">"Every picture tells our beautiful story"</p>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 auto-rows-[150px] sm:auto-rows-[200px] md:auto-rows-[250px]">
-                <div class="gallery-item row-span-2 reveal" onclick="openLightbox(0)">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[180px] sm:auto-rows-[220px] md:auto-rows-[280px]">
+                <div class="gallery-item row-span-2 reveal-scale" onclick="openLightbox(0)">
                     <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&q=80" alt="Romantic Couple" loading="lazy">
                     <div class="gallery-overlay">
-                        <p class="font-serif text-base md:text-xl text-white">The Beginning</p>
+                        <div>
+                            <p class="font-serif text-xl text-white mb-1">The Beginning</p>
+                            <p class="text-rose-200 text-sm">Where it all started</p>
+                        </div>
                     </div>
                 </div>
-                <div class="gallery-item reveal" onclick="openLightbox(1)">
+                <div class="gallery-item reveal-scale" onclick="openLightbox(1)" style="transition-delay: 0.1s;">
                     <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&q=80" alt="Wedding Rings" loading="lazy">
                     <div class="gallery-overlay">
-                        <p class="font-serif text-sm md:text-xl text-white">Promise</p>
+                        <div>
+                            <p class="font-serif text-lg text-white mb-1">Promise</p>
+                            <p class="text-rose-200 text-xs">Forever & Always</p>
+                        </div>
                     </div>
                 </div>
-                <div class="gallery-item reveal" onclick="openLightbox(2)">
+                <div class="gallery-item reveal-scale" onclick="openLightbox(2)" style="transition-delay: 0.2s;">
                     <img src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=800&q=80" alt="Holding Hands" loading="lazy">
                     <div class="gallery-overlay">
-                        <p class="font-serif text-sm md:text-xl text-white">Together</p>
+                        <div>
+                            <p class="font-serif text-lg text-white mb-1">Together</p>
+                            <p class="text-rose-200 text-xs">Hand in Hand</p>
+                        </div>
                     </div>
                 </div>
-                <div class="gallery-item col-span-2 reveal" onclick="openLightbox(3)">
+                <div class="gallery-item col-span-2 reveal-scale" onclick="openLightbox(3)" style="transition-delay: 0.3s;">
                     <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80" alt="Sunset" loading="lazy">
                     <div class="gallery-overlay">
-                        <p class="font-serif text-base md:text-xl text-white">Golden Hour</p>
+                        <div>
+                            <p class="font-serif text-xl text-white mb-1">Golden Hour</p>
+                            <p class="text-rose-200 text-sm">Love in every sunset</p>
+                        </div>
                     </div>
                 </div>
-                <div class="gallery-item reveal" onclick="openLightbox(4)">
+                <div class="gallery-item reveal-scale" onclick="openLightbox(4)" style="transition-delay: 0.4s;">
                     <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80" alt="Laughing" loading="lazy">
                     <div class="gallery-overlay">
-                        <p class="font-serif text-sm md:text-xl text-white">Joy</p>
+                        <div>
+                            <p class="font-serif text-lg text-white mb-1">Joy</p>
+                            <p class="text-rose-200 text-xs">Laughter & Love</p>
+                        </div>
                     </div>
                 </div>
-                <div class="gallery-item col-span-2 md:col-span-1 reveal" onclick="openLightbox(5)">
+                <div class="gallery-item col-span-2 md:col-span-1 reveal-scale" onclick="openLightbox(5)" style="transition-delay: 0.5s;">
                     <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=800&q=80" alt="Dancing" loading="lazy">
                     <div class="gallery-overlay">
-                        <p class="font-serif text-base md:text-xl text-white">Dance</p>
+                        <div>
+                            <p class="font-serif text-lg text-white mb-1">Dance</p>
+                            <p class="text-rose-200 text-xs">Moving as One</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -471,28 +728,33 @@
 
     <!-- Lightbox Modal -->
     <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-md flex items-center justify-center p-4" onclick="closeLightboxOnBackground(event)">
-        <button onclick="closeLightbox()" class="absolute top-4 right-4 md:top-6 md:right-6 btn-touch text-white/70 hover:text-white transition-colors z-50" aria-label="Close">
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 md:top-6 md:right-6 btn-touch text-white/70 hover:text-white transition-colors z-50 hover:rotate-90 transform duration-300" aria-label="Close">
             <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
         
-        <button onclick="changeImage(-1); event.stopPropagation();" class="absolute left-2 md:left-6 btn-touch text-white/70 hover:text-white transition-colors z-50" aria-label="Previous">
+        <button onclick="changeImage(-1); event.stopPropagation();" class="absolute left-2 md:left-6 btn-touch text-white/70 hover:text-white transition-colors z-50 hover:scale-110 transform" aria-label="Previous">
             <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
         </button>
         
-        <button onclick="changeImage(1); event.stopPropagation();" class="absolute right-2 md:right-6 btn-touch text-white/70 hover:text-white transition-colors z-50" aria-label="Next">
+        <button onclick="changeImage(1); event.stopPropagation();" class="absolute right-2 md:right-6 btn-touch text-white/70 hover:text-white transition-colors z-50 hover:scale-110 transform" aria-label="Next">
             <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
         </button>
         
-        <img id="lightbox-img" src="" alt="Gallery" class="max-h-[80vh] max-w-[90vw] object-contain rounded-lg shadow-2xl select-none" onclick="event.stopPropagation()">
+        <img id="lightbox-img" src="" alt="Gallery" class="max-h-[80vh] max-w-[90vw] object-contain rounded-lg shadow-2xl select-none transition-opacity duration-300" onclick="event.stopPropagation()">
+        
+        <!-- Image Counter -->
+        <div class="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full text-white/80 text-sm backdrop-blur-sm">
+            <span id="image-counter">1</span> / 6
+        </div>
         
         <!-- Swipe hint for mobile -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm md:hidden flex items-center space-x-2">
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm md:hidden flex items-center space-x-2 animate-bounce">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
             </svg>
@@ -504,30 +766,40 @@
     </div>
 
     <!-- Quotes Section -->
-    <section id="quotes" class="relative py-16 md:py-24 z-10 overflow-hidden px-4">
+    <section id="quotes" class="relative py-20 md:py-32 z-10 overflow-hidden px-4">
         <div class="absolute inset-0 bg-gradient-to-r from-rose-900/50 via-purple-900/50 to-rose-900/50"></div>
         <div class="max-w-4xl mx-auto relative">
-            <div class="text-center mb-8 md:mb-12 reveal">
-                <h2 class="font-script text-4xl md:text-6xl text-rose-300 mb-3 md:mb-4">Words of Love</h2>
+            <div class="text-center mb-12 md:mb-16 reveal">
+                <span class="text-rose-300 text-sm uppercase tracking-[0.3em] mb-2 block">Inspiration</span>
+                <h2 class="font-script text-5xl md:text-7xl text-rose-300 mb-4">Words of Love</h2>
             </div>
             
-            <div class="glass-panel rounded-2xl md:rounded-3xl p-6 md:p-12 text-center relative reveal mx-2">
-                <div class="absolute -top-4 md:-top-6 left-1/2 -translate-x-1/2 text-4xl md:text-6xl text-rose-400/50">"</div>
+            <div class="glass-panel-strong rounded-3xl p-8 md:p-16 text-center relative reveal quote-glow mx-2">
+                <div class="absolute -top-6 md:-top-8 left-1/2 -translate-x-1/2 text-6xl md:text-8xl text-rose-400/30 animate-float">"</div>
                 
-                <div class="min-h-[120px] md:min-h-[200px] flex items-center justify-center py-4">
-                    <p id="quote-text" class="font-serif text-lg sm:text-xl md:text-3xl lg:text-4xl text-rose-100 leading-relaxed px-2"></p>
+                <div class="min-h-[150px] md:min-h-[200px] flex items-center justify-center py-6">
+                    <p id="quote-text" class="font-serif text-xl sm:text-2xl md:text-4xl text-rose-100 leading-relaxed px-2"></p>
                 </div>
                 
-                <div class="absolute -bottom-4 md:-bottom-6 left-1/2 -translate-x-1/2 text-4xl md:text-6xl text-rose-400/50 rotate-180">"</div>
+                <div class="absolute -bottom-6 md:-bottom-8 left-1/2 -translate-x-1/2 text-6xl md:text-8xl text-rose-400/30 rotate-180 animate-float" style="animation-delay: 1s;">"</div>
                 
-                <div class="mt-6 md:mt-8 flex justify-center space-x-4 md:space-x-6">
-                    <button onclick="prevQuote()" class="btn-touch p-3 md:p-4 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-colors touch-manipulation" aria-label="Previous quote">
-                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Quote Navigation -->
+                <div class="mt-8 md:mt-12 flex justify-center items-center space-x-6 md:space-x-8">
+                    <button onclick="prevQuote()" class="btn-touch p-4 md:p-5 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-all hover:scale-110 touch-manipulation group" aria-label="Previous quote">
+                        <svg class="w-6 h-6 md:w-7 md:h-7 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
                     </button>
-                    <button onclick="nextQuote()" class="btn-touch p-3 md:p-4 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-colors touch-manipulation" aria-label="Next quote">
-                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    
+                    <!-- Dots Indicator -->
+                    <div class="flex space-x-2" id="quote-dots">
+                        <span class="w-2 h-2 rounded-full bg-rose-400 transition-all"></span>
+                        <span class="w-2 h-2 rounded-full bg-white/30 transition-all"></span>
+                        <span class="w-2 h-2 rounded-full bg-white/30 transition-all"></span>
+                    </div>
+                    
+                    <button onclick="nextQuote()" class="btn-touch p-4 md:p-5 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-all hover:scale-110 touch-manipulation group" aria-label="Next quote">
+                        <svg class="w-6 h-6 md:w-7 md:h-7 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </button>
@@ -537,46 +809,68 @@
     </section>
 
     <!-- Celebration Section -->
-    <section class="relative py-16 md:py-24 z-10 text-center px-4">
-        <div class="max-w-3xl mx-auto reveal">
-            <h2 class="font-serif text-3xl sm:text-4xl md:text-6xl mb-4 md:mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-rose-200 to-yellow-200 px-2">
+    <section class="relative py-20 md:py-32 z-10 text-center px-4 overflow-hidden">
+        <!-- Background Decoration -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute top-10 left-10 w-32 h-32 bg-rose-500/20 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-10 right-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+        </div>
+
+        <div class="max-w-3xl mx-auto reveal relative">
+            <div class="inline-flex items-center gap-2 mb-6">
+                <span class="w-12 h-0.5 bg-gradient-to-r from-transparent to-rose-400"></span>
+                <span class="text-rose-300 text-sm uppercase tracking-widest">Join The Celebration</span>
+                <span class="w-12 h-0.5 bg-gradient-to-l from-transparent to-rose-400"></span>
+            </div>
+            
+            <h2 class="font-serif text-4xl sm:text-5xl md:text-7xl mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-rose-200 to-purple-200 px-2 animate-glow">
                 Celebrate Our Love
             </h2>
-            <p class="text-rose-100/80 mb-8 md:mb-12 text-base md:text-lg px-4">Tap below to shower us with love!</p>
+            <p class="text-rose-100/80 mb-10 md:mb-14 text-lg md:text-xl px-4 max-w-xl mx-auto">Tap below to shower Kavin & Dimpi with love and confetti on their special day!</p>
             
-            <button id="celebrate-btn" onclick="launchConfetti()" class="btn-touch group relative inline-flex items-center justify-center text-base md:text-lg font-bold text-white transition-all duration-200 bg-gradient-to-r from-rose-500 to-purple-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 hover:scale-105 hover:shadow-2xl hover:shadow-rose-500/50 active:scale-95 px-8 py-4 md:px-10 md:py-5">
-                <span class="mr-2 text-xl md:text-2xl">💕</span>
-                <span>Celebrate Our Love</span>
-                <div class="absolute inset-0 rounded-full ring-2 md:ring-4 ring-white/20 group-hover:ring-white/40 animate-pulse"></div>
+            <button id="celebrate-btn" onclick="launchConfetti()" class="btn-touch group relative inline-flex items-center justify-center text-lg md:text-xl font-bold text-white transition-all duration-300 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 rounded-full focus:outline-none focus:ring-4 focus:ring-rose-500/30 hover:scale-105 hover:shadow-2xl hover:shadow-rose-500/50 active:scale-95 px-10 py-5 md:px-12 md:py-6 overflow-hidden">
+                <div class="absolute inset-0 bg-white/20 translate-x-[-100%] skew-x-12 group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                <span class="mr-3 text-2xl md:text-3xl animate-bounce">💕</span>
+                <span class="relative">Celebrate Our Love</span>
+                <div class="absolute inset-0 rounded-full ring-4 ring-white/20 group-hover:ring-white/40 animate-pulse"></div>
             </button>
+
+            <p class="mt-8 text-rose-200/50 text-sm">February 23, 2026 • 2 Years of Love</p>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="relative z-10 bg-black/40 border-t border-white/10 pt-12 md:pt-16 pb-8 md:pb-12 px-4">
+    <footer class="relative z-10 bg-black/40 border-t border-white/10 pt-16 md:pt-20 pb-8 md:pb-12 px-4">
         <div class="max-w-7xl mx-auto text-center">
-            <div class="mb-6 md:mb-8">
-                <span class="font-script text-3xl md:text-4xl text-rose-300">Kavin & Dimpi</span>
+            <div class="mb-8">
+                <span class="font-script text-4xl md:text-5xl text-rose-300 block mb-2">Kavin & Dimpi</span>
+                <span class="text-rose-200/60 text-sm tracking-widest uppercase">Forever Begins Here</span>
             </div>
             
-            <div class="flex justify-center space-x-4 md:space-x-6 mb-6 md:mb-8">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 flex items-center justify-center text-xl md:text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer btn-touch">💌</div>
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 flex items-center justify-center text-xl md:text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer btn-touch">🌹</div>
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 flex items-center justify-center text-xl md:text-2xl hover:bg-rose-500/20 transition-colors cursor-pointer btn-touch">💍</div>
+            <div class="flex justify-center space-x-6 mb-8">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-500/20 to-purple-500/20 flex items-center justify-center text-2xl hover:scale-110 hover:from-rose-500/40 hover:to-purple-500/40 transition-all cursor-pointer btn-touch border border-white/10">💌</div>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-500/20 to-purple-500/20 flex items-center justify-center text-2xl hover:scale-110 hover:from-rose-500/40 hover:to-purple-500/40 transition-all cursor-pointer btn-touch border border-white/10">🌹</div>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-500/20 to-purple-500/20 flex items-center justify-center text-2xl hover:scale-110 hover:from-rose-500/40 hover:to-purple-500/40 transition-all cursor-pointer btn-touch border border-white/10">💍</div>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-500/20 to-purple-500/20 flex items-center justify-center text-2xl hover:scale-110 hover:from-rose-500/40 hover:to-purple-500/40 transition-all cursor-pointer btn-touch border border-white/10">✨</div>
             </div>
 
-            <p class="text-rose-200/60 text-xs md:text-sm mb-3">
-                Made with <span class="text-red-500 animate-pulse">❤️</span> for Kavin Gam & Dimpi Dutta
+            <div class="mb-6 inline-flex items-center gap-2 text-rose-200/60 text-sm bg-white/5 px-4 py-2 rounded-full">
+                <span>📅</span>
+                <span>Celebrating on February 23, 2026</span>
+            </div>
+
+            <p class="text-rose-200/60 text-sm mb-3">
+                Made with <span class="text-red-500 animate-pulse inline-block">❤️</span> for Kavin Gam & Dimpi Dutta
             </p>
-            <p class="text-white/30 text-[10px] md:text-xs">
-                © 2026 Two Years of Eternal Love
+            <p class="text-white/30 text-xs">
+                © 2026 Two Years of Eternal Love • Crafted with Passion
             </p>
         </div>
         
         <!-- Wave -->
         <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none pointer-events-none">
-            <svg class="relative block w-full h-[40px] md:h-[60px]" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="fill-rose-900/30"></path>
+            <svg class="relative block w-full h-[50px] md:h-[80px]" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="fill-rose-900/30 animate-pulse"></path>
             </svg>
         </div>
     </footer>
@@ -592,9 +886,15 @@
         const CONFIG = {
             isTouch: window.matchMedia('(pointer: coarse)').matches,
             isMobile: window.innerWidth < 768,
-            particleCount: window.innerWidth < 768 ? 30 : 50,
-            confettiCount: window.innerWidth < 768 ? 80 : 150
+            particleCount: window.innerWidth < 768 ? 40 : 70,
+            confettiCount: window.innerWidth < 768 ? 100 : 200,
+            anniversaryDate: new Date('2024-02-23'),
+            today: new Date('2026-02-23')
         };
+
+        // Calculate years together
+        const yearsTogether = 2;
+        const daysTogether = Math.floor((CONFIG.today - CONFIG.anniversaryDate) / (1000 * 60 * 60 * 24));
 
         // ===== PARTICLE SYSTEM =====
         const canvas = document.getElementById('particle-canvas');
@@ -623,17 +923,18 @@
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + Math.random() * 100;
                 this.speed = 0.3 + Math.random() * (CONFIG.isMobile ? 1 : 1.5);
-                this.size = Math.random() * (CONFIG.isMobile ? 2 : 3) + 1;
-                this.opacity = Math.random() * 0.4 + 0.1;
-                this.type = Math.random() > 0.6 ? 'heart' : 'circle';
+                this.size = Math.random() * (CONFIG.isMobile ? 3 : 4) + 1;
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.type = Math.random() > 0.5 ? 'heart' : 'circle';
                 this.color = `rgba(255, ${100 + Math.random() * 100}, ${150 + Math.random() * 105}, ${this.opacity})`;
                 this.wobble = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = 0.02 + Math.random() * 0.02;
             }
             
             update() {
                 this.y -= this.speed;
-                this.wobble += 0.02;
-                this.x += Math.sin(this.wobble) * 0.5;
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 0.8;
                 
                 if (this.y < -10) this.reset();
             }
@@ -645,14 +946,22 @@
                 if (this.type === 'circle') {
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 } else {
-                    const size = this.size * 1.2;
-                    ctx.moveTo(this.x, this.y + size / 4);
-                    ctx.quadraticCurveTo(this.x, this.y, this.x + size / 4, this.y);
-                    ctx.quadraticCurveTo(this.x + size / 2, this.y, this.x + size / 2, this.y + size / 4);
-                    ctx.quadraticCurveTo(this.x + size / 2, this.y, this.x + size * 3/4, this.y);
-                    ctx.quadraticCurveTo(this.x + size, this.y, this.x + size, this.y + size / 4);
-                    ctx.quadraticCurveTo(this.x + size, this.y + size / 2, this.x + size * 1/2, this.y + size * 3/4);
-                    ctx.quadraticCurveTo(this.x, this.y + size / 2, this.x, this.y + size / 4);
+                    const size = this.size * 1.5;
+                    // Draw heart shape
+                    const topCurveHeight = size * 0.3;
+                    ctx.moveTo(this.x, this.y + topCurveHeight);
+                    // top left curve
+                    ctx.bezierCurveTo(
+                        this.x - size / 2, this.y - topCurveHeight / 2,
+                        this.x - size / 2, this.y - topCurveHeight,
+                        this.x, this.y - topCurveHeight / 2
+                    );
+                    // top right curve
+                    ctx.bezierCurveTo(
+                        this.x + size / 2, this.y - topCurveHeight,
+                        this.x + size / 2, this.y - topCurveHeight / 2,
+                        this.x, this.y + topCurveHeight
+                    );
                 }
                 ctx.fill();
             }
@@ -697,7 +1006,7 @@
         // ===== SCROLL REVEAL =====
         const observerOptions = { 
             threshold: 0.1, 
-            rootMargin: '0px 0px -30px 0px' 
+            rootMargin: '0px 0px -50px 0px' 
         };
         
         const observer = new IntersectionObserver((entries) => {
@@ -708,16 +1017,16 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
 
         // ===== QUOTES SYSTEM =====
         const quotes = [
             "I saw that you were perfect, and so I loved you. Then I saw that you were not perfect and I loved you even more.",
-            "The best thing to hold onto in life is each other.",
-            "In all the world, there is no heart for me like yours.",
-            "Whatever our souls are made of, his and mine are the same.",
-            "If I know what love is, it is because of you.",
-            "You are my today and all of my tomorrows."
+            "The best thing to hold onto in life is each other. In you, I've found my home.",
+            "In all the world, there is no heart for me like yours. Two years and counting...",
+            "Whatever our souls are made of, his and mine are the same. Forever intertwined.",
+            "If I know what love is, it is because of you. Thank you for two beautiful years.",
+            "You are my today and all of my tomorrows. Here's to eternity together."
         ];
         
         let currentQuote = 0;
@@ -727,33 +1036,54 @@
         function typeWriter(text, element) {
             clearTimeout(typeTimeout);
             element.textContent = '';
+            element.style.opacity = '1';
             let i = 0;
             
             function type() {
                 if (i < text.length) {
                     element.textContent += text.charAt(i);
                     i++;
-                    typeTimeout = setTimeout(type, CONFIG.isMobile ? 30 : 40);
+                    typeTimeout = setTimeout(type, CONFIG.isMobile ? 25 : 35);
                 }
             }
             type();
         }
 
+        function updateDots() {
+            const dots = document.querySelectorAll('#quote-dots span');
+            dots.forEach((dot, index) => {
+                if (index === currentQuote) {
+                    dot.classList.remove('bg-white/30');
+                    dot.classList.add('bg-rose-400', 'scale-125');
+                } else {
+                    dot.classList.remove('bg-rose-400', 'scale-125');
+                    dot.classList.add('bg-white/30');
+                }
+            });
+        }
+
         function showQuote(index) {
+            currentQuote = index;
             typeWriter(quotes[index], quoteText);
+            updateDots();
         }
 
         function nextQuote() {
-            currentQuote = (currentQuote + 1) % quotes.length;
-            showQuote(currentQuote);
+            showQuote((currentQuote + 1) % quotes.length);
         }
 
         function prevQuote() {
-            currentQuote = (currentQuote - 1 + quotes.length) % quotes.length;
-            showQuote(currentQuote);
+            showQuote((currentQuote - 1 + quotes.length) % quotes.length);
         }
 
         setTimeout(() => showQuote(0), 500);
+
+        // Auto-rotate quotes
+        setInterval(() => {
+            if (!document.hidden) {
+                nextQuote();
+            }
+        }, 8000);
 
         // ===== GALLERY LIGHTBOX =====
         const galleryImages = [
@@ -772,7 +1102,15 @@
             currentImage = index;
             const lightbox = document.getElementById('lightbox');
             const img = document.getElementById('lightbox-img');
-            img.src = galleryImages[index];
+            const counter = document.getElementById('image-counter');
+            
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = galleryImages[index];
+                img.style.opacity = '1';
+            }, 150);
+            
+            counter.textContent = index + 1;
             lightbox.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
             
@@ -796,11 +1134,14 @@
         function changeImage(direction) {
             currentImage = (currentImage + direction + galleryImages.length) % galleryImages.length;
             const img = document.getElementById('lightbox-img');
+            const counter = document.getElementById('image-counter');
+            
             img.style.opacity = '0';
             setTimeout(() => {
                 img.src = galleryImages[currentImage];
                 img.style.opacity = '1';
-            }, 150);
+                counter.textContent = currentImage + 1;
+            }, 200);
         }
 
         function handleTouchStart(e) {
@@ -832,45 +1173,107 @@
 
         // ===== CONFETTI =====
         function launchConfetti() {
-            const colors = ['#ff0000', '#ffd700', '#ff69b4', '#ff1493', '#ffffff', '#9370db'];
+            const colors = ['#ff0000', '#ffd700', '#ff69b4', '#ff1493', '#ffffff', '#9370db', '#ff6b9d', '#c084fc'];
             const container = document.body;
             const count = CONFIG.confettiCount;
             
             // Haptic feedback if available
-            if (navigator.vibrate) navigator.vibrate(50);
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            
+            // Create explosion from center
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
             
             for (let i = 0; i < count; i++) {
                 const confetti = document.createElement('div');
-                const size = Math.random() * 8 + 4;
+                const size = Math.random() * 10 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
                 
                 confetti.style.cssText = `
                     position: fixed;
                     width: ${size}px;
                     height: ${size}px;
-                    background-color: ${colors[Math.floor(Math.random() * colors.length)]};
-                    left: ${Math.random() * 100}vw;
-                    top: -10px;
+                    background-color: ${color};
+                    left: ${centerX}px;
+                    top: ${centerY}px;
                     z-index: 9999;
                     pointer-events: none;
                     border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
-                    opacity: ${Math.random() * 0.8 + 0.2};
+                    opacity: 1;
                 `;
                 
-                const duration = Math.random() * 2 + 2;
-                const delay = Math.random() * 0.5;
-                
-                confetti.animate([
-                    { transform: `translateY(0) rotate(0deg) translateX(0)`, opacity: 1 },
-                    { transform: `translateY(${window.innerHeight + 20}px) rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`, opacity: 0 }
-                ], {
-                    duration: duration * 1000,
-                    delay: delay * 1000,
-                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-                }).onfinish = () => confetti.remove();
+                const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+                const velocity = 5 + Math.random() * 10;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity - 10;
+                const gravity = 0.5;
+                const duration = 2000 + Math.random() * 2000;
                 
                 container.appendChild(confetti);
+                
+                let posX = centerX;
+                let posY = centerY;
+                let velX = vx;
+                let velY = vy;
+                let rotation = 0;
+                let rotSpeed = (Math.random() - 0.5) * 20;
+                
+                const startTime = performance.now();
+                
+                function animate(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = elapsed / duration;
+                    
+                    if (progress < 1) {
+                        velY += gravity;
+                        posX += velX;
+                        posY += velY;
+                        rotation += rotSpeed;
+                        
+                        confetti.style.left = posX + 'px';
+                        confetti.style.top = posY + 'px';
+                        confetti.style.transform = `rotate(${rotation}deg)`;
+                        confetti.style.opacity = 1 - progress;
+                        
+                        requestAnimationFrame(animate);
+                    } else {
+                        confetti.remove();
+                    }
+                }
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // Add floating hearts
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.textContent = '💕';
+                    heart.style.cssText = `
+                        position: fixed;
+                        left: ${Math.random() * window.innerWidth}px;
+                        bottom: -50px;
+                        font-size: ${20 + Math.random() * 20}px;
+                        z-index: 9998;
+                        pointer-events: none;
+                        animation: float-up 3s ease-out forwards;
+                    `;
+                    container.appendChild(heart);
+                    setTimeout(() => heart.remove(), 3000);
+                }, i * 100);
             }
         }
+
+        // Add float-up animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float-up {
+                0% { transform: translateY(0) scale(0.5); opacity: 0; }
+                10% { opacity: 1; transform: translateY(-20px) scale(1); }
+                100% { transform: translateY(-window.innerHeight) scale(1.2); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
 
         // ===== MUSIC =====
         let isPlaying = false;
@@ -884,21 +1287,27 @@
                 music.pause();
                 icons.forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.textContent = '🎵';
+                    if (el) {
+                        el.textContent = '🎵';
+                        el.classList.remove('animate-spin');
+                    }
                 });
                 texts.forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.textContent = 'Play';
+                    if (el) el.textContent = 'Play Love Song';
                 });
             } else {
                 music.play().catch(e => console.log("Audio play failed:", e));
                 icons.forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.textContent = '⏸';
+                    if (el) {
+                        el.textContent = '⏸';
+                        el.classList.add('animate-spin');
+                    }
                 });
                 texts.forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.textContent = 'Pause';
+                    if (el) el.textContent = 'Pause Music';
                 });
             }
             isPlaying = !isPlaying;
@@ -920,9 +1329,9 @@
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if (window.scrollY > 50) {
-                nav.classList.add('bg-black/60', 'backdrop-blur-md', 'shadow-lg');
+                nav.classList.add('bg-black/70', 'backdrop-blur-lg', 'shadow-lg', 'shadow-rose-900/20');
             } else {
-                nav.classList.remove('bg-black/60', 'backdrop-blur-md', 'shadow-lg');
+                nav.classList.remove('bg-black/70', 'backdrop-blur-lg', 'shadow-lg', 'shadow-rose-900/20');
             }
         }, { passive: true });
 
@@ -938,6 +1347,34 @@
         window.addEventListener('orientationchange', () => {
             setTimeout(resizeCanvas, 100);
         });
+
+        // Animate counters on load
+        function animateCounter(element, target, suffix = '') {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + suffix;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + suffix;
+                }
+            }, 30);
+        }
+
+        // Trigger counter animation when visible
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(document.getElementById('days-count'), 730);
+                    animateCounter(document.getElementById('hours-count'), 17520);
+                    counterObserver.disconnect();
+                }
+            });
+        });
+        
+        counterObserver.observe(document.getElementById('days-count'));
     </script>
 </body>
 </html>
